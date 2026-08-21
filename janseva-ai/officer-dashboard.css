@@ -1,0 +1,520 @@
+/* JanSeva AI - Officer AI Command Center Styles */
+
+/* ==========================================================================
+   Officer Executive Bar & Live SLA Breach Alert
+   ========================================================================== */
+.officer-banner-alert {
+  background: linear-gradient(90deg, #7f1d1d, #991b1b);
+  color: #fef2f2;
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 12px rgba(153, 27, 27, 0.25);
+  margin-bottom: 1.5rem;
+  border-left: 5px solid #ef4444;
+}
+
+.alert-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.alert-icon {
+  background: rgba(255, 255, 255, 0.2);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.alert-text h5 {
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.alert-text p {
+  font-size: 0.78rem;
+  opacity: 0.9;
+}
+
+.alert-btn {
+  background: #ffffff;
+  color: #991b1b;
+  border: none;
+  padding: 6px 14px;
+  border-radius: var(--radius-xs);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Officer KPI Cards Strip
+   ========================================================================== */
+.officer-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.officer-kpi-card {
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--slate-200);
+  padding: 1.1rem 1.2rem;
+  box-shadow: var(--shadow-xs);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.officer-kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--slate-300);
+}
+
+.officer-kpi-card.crit::before { background: #ef4444; }
+.officer-kpi-card.clust::before { background: #8b5cf6; }
+.officer-kpi-card.sla::before { background: #f59e0b; }
+.officer-kpi-card.res::before { background: #10b981; }
+.officer-kpi-card.acc::before { background: #0284c7; }
+
+.officer-kpi-card .kpi-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--slate-500);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.officer-kpi-card .kpi-number {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--slate-900);
+  margin: 4px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.kpi-delta {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+}
+
+.kpi-delta.pos { background: #dcfce7; color: #15803d; }
+.kpi-delta.neg { background: #fee2e2; color: #b91c1c; }
+.kpi-delta.neutral { background: #f1f5f9; color: var(--slate-600); }
+
+.officer-kpi-card .kpi-sub {
+  font-size: 0.72rem;
+  color: var(--slate-400);
+}
+
+/* ==========================================================================
+   GIS Map & Real-Time Analytics Split Section
+   ========================================================================== */
+.gis-analytics-split {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.gis-map-panel {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--slate-200);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.gis-header-bar {
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid var(--slate-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--slate-50);
+}
+
+.gis-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--gov-navy-deep);
+}
+
+.gis-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gis-filter-select {
+  font-size: 0.78rem;
+  padding: 4px 8px;
+  border: 1px solid var(--slate-300);
+  border-radius: var(--radius-xs);
+  background: #fff;
+  color: var(--slate-700);
+  outline: none;
+}
+
+.gis-map-container {
+  height: 380px;
+  width: 100%;
+  background: #0f172a;
+  position: relative;
+}
+
+#gisMapLeaflet {
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+}
+
+.map-floating-legend {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.72rem;
+  z-index: 10;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+/* GIS Side Analytics Widgets */
+.gis-side-widgets {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.widget-box {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--slate-200);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  flex: 1;
+}
+
+.widget-box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.widget-box-header h4 {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--gov-navy-deep);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Category Progress Bars */
+.cat-progress-item {
+  margin-bottom: 0.75rem;
+}
+
+.cat-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--slate-700);
+  margin-bottom: 3px;
+}
+
+.cat-progress-bar-bg {
+  height: 8px;
+  background: var(--slate-100);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.cat-progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.6s ease;
+}
+
+/* ==========================================================================
+   Master Ticket Matrix & Triage Table
+   ========================================================================== */
+.triage-table-panel {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--slate-200);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.triage-table-toolbar {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--slate-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: var(--slate-50);
+}
+
+.triage-filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.filter-pill-btn {
+  border: 1px solid var(--slate-300);
+  background: #ffffff;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--slate-600);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.filter-pill-btn.active {
+  background: var(--gov-navy-deep);
+  color: #ffffff;
+  border-color: var(--gov-navy-deep);
+}
+
+.triage-search-input {
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  border: 1px solid var(--slate-300);
+  border-radius: var(--radius-xs);
+  outline: none;
+  min-width: 220px;
+}
+
+/* Data Table */
+.data-table-container {
+  overflow-x: auto;
+}
+
+.triage-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  text-align: left;
+}
+
+.triage-table th {
+  background: #f8fafc;
+  padding: 10px 14px;
+  font-weight: 700;
+  color: var(--slate-600);
+  border-bottom: 1px solid var(--slate-200);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.triage-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--slate-200);
+  color: var(--slate-700);
+  vertical-align: middle;
+}
+
+.triage-table tr:hover td {
+  background: #f8fafc;
+  cursor: pointer;
+}
+
+.ticket-cell-id {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--gov-navy-deep);
+}
+
+.ticket-cell-title {
+  font-weight: 600;
+  color: var(--slate-900);
+  display: block;
+}
+
+.ticket-cell-sub {
+  font-size: 0.74rem;
+  color: var(--slate-500);
+}
+
+.sla-countdown-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+}
+
+.sla-countdown-tag.breaching {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+  animation: pulseCrit 2s infinite;
+}
+
+.sla-countdown-tag.normal {
+  background: #f1f5f9;
+  color: var(--slate-700);
+}
+
+/* ==========================================================================
+   Ticket Inspection / XAI Detail Drawer (Right Sidebar Modal)
+   ========================================================================== */
+.drawer-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 10000;
+  display: none;
+  justify-content: flex-end;
+  animation: fadeIn 200ms ease;
+}
+
+.drawer-backdrop.open {
+  display: flex;
+}
+
+.drawer-sheet {
+  width: 680px;
+  max-width: 95vw;
+  height: 100vh;
+  background: #ffffff;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  animation: slideLeft 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+@keyframes slideLeft {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.drawer-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--slate-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--gov-navy-deep);
+  color: #fff;
+}
+
+.drawer-header h3 {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.drawer-close-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.drawer-body {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.drawer-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--slate-200);
+  background: var(--slate-50);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (max-width: 1100px) {
+  .officer-kpi-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .gis-analytics-split {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .officer-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}

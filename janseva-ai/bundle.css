@@ -1,0 +1,2665 @@
+/* --- design-tokens.css --- */
+/* JanSeva AI - Design Tokens & Variables */
+:root {
+  /* Primary Civic & Government Palette */
+  --gov-navy-deep: #091e3a;
+  --gov-navy-dark: #0f2b48;
+  --gov-navy-base: #183e68;
+  --gov-navy-light: #245287;
+  --gov-navy-surface: #f0f4f9;
+
+  /* National Tricolor Accents */
+  --tiranga-saffron: #f97316;
+  --tiranga-saffron-dark: #c2410c;
+  --tiranga-saffron-light: #ffedd5;
+  --tiranga-green: #15803d;
+  --tiranga-green-dark: #166534;
+  --tiranga-green-light: #dcfce7;
+  --tiranga-blue: #0284c7;
+
+  /* Neutral Spectrum */
+  --slate-900: #0f172a;
+  --slate-800: #1e293b;
+  --slate-700: #334155;
+  --slate-600: #475569;
+  --slate-500: #64748b;
+  --slate-400: #94a3b8;
+  --slate-300: #cbd5e1;
+  --slate-200: #e2e8f0;
+  --slate-100: #f1f5f9;
+  --slate-50: #f8fafc;
+  --white: #ffffff;
+
+  /* Dynamic Severity / Urgency Palette */
+  --severity-critical-bg: #fef2f2;
+  --severity-critical-text: #b91c1c;
+  --severity-critical-border: #f87171;
+  --severity-critical-dot: #ef4444;
+
+  --severity-high-bg: #fff7ed;
+  --severity-high-text: #c2410c;
+  --severity-high-border: #fdba74;
+  --severity-high-dot: #f97316;
+
+  --severity-medium-bg: #fefce8;
+  --severity-medium-text: #854d0e;
+  --severity-medium-border: #fde047;
+  --severity-medium-dot: #eab308;
+
+  --severity-low-bg: #f0fdf4;
+  --severity-low-text: #166534;
+  --severity-low-border: #86efac;
+  --severity-low-dot: #22c55e;
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  --font-indic: 'Mukta', 'Noto Sans Devanagari', 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+
+  /* Elevational Shadows */
+  --shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.1), 0 1px 2px -1px rgba(15, 23, 42, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+  --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+  --shadow-glow-saffron: 0 0 20px rgba(249, 115, 22, 0.25);
+  --shadow-glow-navy: 0 0 24px rgba(15, 43, 72, 0.18);
+
+  /* Radii */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Accessibility Scaling */
+  --base-font-size: 16px;
+}
+
+/* High Contrast Mode */
+body.high-contrast {
+  --gov-navy-deep: #000000;
+  --gov-navy-dark: #0a0a0a;
+  --gov-navy-base: #171717;
+  --slate-900: #000000;
+  --slate-800: #121212;
+  --slate-700: #262626;
+  --slate-600: #404040;
+  --slate-500: #525252;
+  --slate-400: #737373;
+  --slate-300: #a3a3a3;
+  --slate-200: #e5e5e5;
+  --slate-100: #f5f5f5;
+  --slate-50: #ffffff;
+  --white: #ffffff;
+  --tiranga-saffron: #ea580c;
+  --tiranga-green: #15803d;
+}
+
+/* Dark Mode Theme for Officer Analytics Portal */
+body.dark-officer-theme {
+  --bg-primary: #0b1324;
+  --bg-surface: #111d38;
+  --bg-surface-elevated: #18284d;
+  --bg-card: #132242;
+  --border-color: #233863;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+}
+
+/* --- base.css --- */
+/* JanSeva AI - Base Styles & Global Components */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: var(--base-font-size);
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--slate-800);
+  background-color: var(--slate-100);
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+/* ==========================================================================
+   Top Official Civic Bar (Tricolor & Accessibility Strip)
+   ========================================================================== */
+.gov-top-ribbon {
+  background: #ffffff;
+  border-bottom: 1px solid var(--slate-200);
+  font-size: 0.78rem;
+  padding: 4px 1.5rem;
+  color: var(--slate-600);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+}
+
+.tricolor-stripe {
+  height: 4px;
+  width: 100%;
+  background: linear-gradient(90deg, #f97316 0%, #f97316 33.33%, #ffffff 33.33%, #ffffff 66.66%, #15803d 66.66%, #15803d 100%);
+}
+
+.gov-top-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.gov-top-left img.national-emblem-micro {
+  height: 18px;
+  width: auto;
+}
+
+.gov-top-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.a11y-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.a11y-btn {
+  background: var(--slate-100);
+  border: 1px solid var(--slate-300);
+  border-radius: var(--radius-xs);
+  padding: 2px 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--slate-700);
+  transition: all var(--transition-fast);
+}
+
+.a11y-btn:hover {
+  background: var(--gov-navy-base);
+  color: var(--white);
+  border-color: var(--gov-navy-base);
+}
+
+.lang-selector-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+
+.lang-select {
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  border: 1px solid var(--slate-300);
+  border-radius: var(--radius-xs);
+  background: #fff;
+  color: var(--slate-800);
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+
+/* ==========================================================================
+   Main Header Navigation
+   ========================================================================== */
+.main-header {
+  background: #ffffff;
+  border-bottom: 1px solid var(--slate-200);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  box-shadow: var(--shadow-sm);
+}
+
+.header-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.brand-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.brand-logo-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, var(--gov-navy-deep), var(--gov-navy-base));
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 10px rgba(9, 30, 58, 0.25);
+  color: #fff;
+}
+
+.brand-logo-badge svg {
+  width: 24px;
+  height: 24px;
+  fill: var(--tiranga-saffron);
+}
+
+.brand-titles {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title {
+  font-family: var(--font-heading);
+  font-size: 1.28rem;
+  font-weight: 800;
+  color: var(--gov-navy-deep);
+  line-height: 1.15;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.brand-title .ai-pill {
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  background: linear-gradient(90deg, #f97316, #ea580c);
+  color: #ffffff;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.brand-subtitle {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--slate-500);
+  letter-spacing: 0.02em;
+}
+
+/* Nav Portal Tabs */
+.portal-nav-tabs {
+  display: flex;
+  align-items: center;
+  background: var(--slate-100);
+  padding: 4px;
+  border-radius: var(--radius-md);
+  gap: 2px;
+  border: 1px solid var(--slate-200);
+}
+
+.nav-tab-btn {
+  border: none;
+  background: transparent;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--slate-600);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.nav-tab-btn:hover {
+  color: var(--gov-navy-deep);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.nav-tab-btn.active {
+  background: #ffffff;
+  color: var(--gov-navy-deep);
+  box-shadow: var(--shadow-sm);
+  font-weight: 700;
+}
+
+.nav-tab-btn.active .tab-icon {
+  color: var(--tiranga-saffron-dark);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.voice-quick-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #ea580c, #f97316);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.35);
+  transition: all var(--transition-fast);
+}
+
+.voice-quick-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(249, 115, 22, 0.45);
+}
+
+.officer-auth-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--gov-navy-surface);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gov-navy-deep);
+  cursor: pointer;
+}
+
+.officer-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--gov-navy-base);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   Layout Containers & Common Primitives
+   ========================================================================== */
+.main-content {
+  flex: 1;
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.view-section {
+  display: none;
+  animation: fadeIn 250ms ease-out forwards;
+}
+
+.view-section.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Common Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--gov-navy-deep);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background: var(--gov-navy-base);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-saffron {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: #ffffff;
+}
+
+.btn-saffron:hover {
+  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.4);
+}
+
+.btn-outline {
+  background: #ffffff;
+  border-color: var(--slate-300);
+  color: var(--slate-700);
+}
+
+.btn-outline:hover {
+  background: var(--slate-50);
+  border-color: var(--gov-navy-base);
+  color: var(--gov-navy-deep);
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 0.78rem;
+}
+
+.btn-icon-only {
+  padding: 8px;
+  border-radius: var(--radius-sm);
+}
+
+/* Badges & Pills */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.badge-critical {
+  background: var(--severity-critical-bg);
+  color: var(--severity-critical-text);
+  border: 1px solid var(--severity-critical-border);
+}
+
+.badge-high {
+  background: var(--severity-high-bg);
+  color: var(--severity-high-text);
+  border: 1px solid var(--severity-high-border);
+}
+
+.badge-medium {
+  background: var(--severity-medium-bg);
+  color: var(--severity-medium-text);
+  border: 1px solid var(--severity-medium-border);
+}
+
+.badge-low {
+  background: var(--severity-low-bg);
+  color: var(--severity-low-text);
+  border: 1px solid var(--severity-low-border);
+}
+
+.badge-cluster {
+  background: #ede9fe;
+  color: #6d28d9;
+  border: 1px solid #c4b5fd;
+}
+
+.badge-resolved {
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+
+.badge-progress {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+.badge-pending {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+/* Status Pulsing Dot */
+.pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.pulse-dot.critical {
+  background-color: var(--severity-critical-dot);
+  box-shadow: 0 0 0 rgba(239, 68, 68, 0.4);
+  animation: pulseCrit 1.5s infinite;
+}
+
+.pulse-dot.active {
+  background-color: var(--tiranga-green);
+  box-shadow: 0 0 0 rgba(21, 128, 61, 0.4);
+  animation: pulseGreen 2s infinite;
+}
+
+@keyframes pulseCrit {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+
+  70% {
+    box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+@keyframes pulseGreen {
+  0% {
+    box-shadow: 0 0 0 0 rgba(21, 128, 61, 0.7);
+  }
+
+  70% {
+    box-shadow: 0 0 0 6px rgba(21, 128, 61, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(21, 128, 61, 0);
+  }
+}
+
+/* Footer */
+.portal-footer {
+  background: var(--gov-navy-deep);
+  color: var(--slate-300);
+  padding: 2.5rem 1.5rem 1rem;
+  margin-top: auto;
+  border-top: 4px solid var(--tiranga-saffron);
+}
+
+.footer-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  gap: 2.5rem;
+}
+
+.footer-brand h4 {
+  font-family: var(--font-heading);
+  color: #fff;
+  font-size: 1.15rem;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-brand p {
+  font-size: 0.84rem;
+  color: var(--slate-400);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.footer-col h5 {
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.footer-col ul {
+  list-style: none;
+}
+
+.footer-col li {
+  margin-bottom: 0.4rem;
+}
+
+.footer-col a {
+  color: var(--slate-400);
+  text-decoration: none;
+  font-size: 0.82rem;
+  transition: color var(--transition-fast);
+}
+
+.footer-col a:hover {
+  color: var(--tiranga-saffron);
+}
+
+.footer-bottom {
+  max-width: 1440px;
+  margin: 2rem auto 0;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--slate-400);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+@media (max-width: 900px) {
+  .header-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .portal-nav-tabs {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .footer-container {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+/* --- citizen-portal.css --- */
+/* JanSeva AI - Citizen Portal Styles */
+
+/* ==========================================================================
+   Citizen Hero & Quick Search
+   ========================================================================== */
+.citizen-hero {
+  background: linear-gradient(135deg, var(--gov-navy-deep) 0%, var(--gov-navy-dark) 60%, var(--gov-navy-base) 100%);
+  border-radius: var(--radius-lg);
+  padding: 2.2rem 2.5rem;
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 2rem;
+}
+
+.citizen-hero::after {
+  content: '';
+  position: absolute;
+  right: -50px;
+  bottom: -50px;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.15) 0%, rgba(2, 132, 199, 0.05) 50%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--tiranga-saffron-light);
+  margin-bottom: 1rem;
+}
+
+.hero-headline {
+  font-family: var(--font-heading);
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+}
+
+.hero-headline span.highlight {
+  color: var(--tiranga-saffron);
+}
+
+.hero-description {
+  font-size: 1.02rem;
+  color: var(--slate-300);
+  max-width: 720px;
+  line-height: 1.6;
+  margin-bottom: 1.8rem;
+}
+
+/* Quick Search & Voice Bar */
+.hero-search-wrapper {
+  max-width: 760px;
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border-radius: var(--radius-full);
+  padding: 6px 8px 6px 18px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  gap: 8px;
+}
+
+.hero-search-input {
+  flex: 1;
+  border: none;
+  font-size: 0.95rem;
+  color: var(--slate-800);
+  outline: none;
+  font-family: var(--font-sans);
+}
+
+.hero-voice-trigger {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: #fff;
+  border: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(249, 115, 22, 0.4);
+  transition: transform var(--transition-fast);
+}
+
+.hero-voice-trigger:hover {
+  transform: scale(1.08);
+}
+
+.hero-search-btn {
+  background: var(--gov-navy-deep);
+  color: #fff;
+  border: none;
+  padding: 10px 22px;
+  border-radius: var(--radius-full);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.hero-search-btn:hover {
+  background: var(--gov-navy-base);
+}
+
+/* Trending Keywords */
+.hero-trending {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 1rem;
+  font-size: 0.78rem;
+  color: var(--slate-300);
+  flex-wrap: wrap;
+}
+
+.trending-pill {
+  background: rgba(255, 255, 255, 0.12);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  color: #ffffff;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.trending-pill:hover {
+  background: rgba(249, 115, 22, 0.3);
+}
+
+/* ==========================================================================
+   Citizen Status Strip (Like SmartSeva / JK Samadhan)
+   ========================================================================== */
+.citizen-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.citizen-kpi-card {
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--slate-200);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.citizen-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.kpi-info h4 {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--slate-500);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 4px;
+}
+
+.kpi-info .kpi-val {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--gov-navy-deep);
+}
+
+.kpi-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+}
+
+.kpi-icon-box.total {
+  background: #f1f5f9;
+  color: var(--gov-navy-base);
+}
+
+.kpi-icon-box.pending {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.kpi-icon-box.resolved {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.kpi-icon-box.sla {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+/* ==========================================================================
+   Primary Action Hub (4 Cards: Voice, Photo, Form, Track)
+   ========================================================================== */
+.action-hub-section {
+  margin-bottom: 2.5rem;
+}
+
+.section-header-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.section-title {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--gov-navy-deep);
+}
+
+.section-subtitle {
+  font-size: 0.84rem;
+  color: var(--slate-500);
+  margin-top: 2px;
+}
+
+.action-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+.action-card {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--slate-200);
+  padding: 1.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+
+.action-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+  border-color: var(--slate-300);
+}
+
+.action-card.featured-voice {
+  border: 2px solid var(--tiranga-saffron);
+  background: linear-gradient(180deg, #fffaf5 0%, #ffffff 100%);
+}
+
+.action-card-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+}
+
+.action-card-badge.ai {
+  background: linear-gradient(90deg, #f97316, #ea580c);
+  color: #fff;
+}
+
+.action-card-badge.fast {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.action-card-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  margin-bottom: 1.2rem;
+  transition: transform var(--transition-fast);
+}
+
+.action-card:hover .action-card-icon {
+  transform: scale(1.1);
+}
+
+.action-card-icon.voice {
+  background: #ffedd5;
+  color: #ea580c;
+}
+
+.action-card-icon.photo {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.action-card-icon.form {
+  background: #f1f5f9;
+  color: var(--gov-navy-deep);
+}
+
+.action-card-icon.track {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.action-card h3 {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gov-navy-deep);
+  margin-bottom: 0.4rem;
+}
+
+.action-card p {
+  font-size: 0.82rem;
+  color: var(--slate-500);
+  line-height: 1.5;
+  margin-bottom: 1.2rem;
+  flex: 1;
+}
+
+.action-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--gov-navy-base);
+}
+
+.action-card.featured-voice .action-card-footer {
+  color: var(--tiranga-saffron-dark);
+}
+
+/* ==========================================================================
+   Active Citizen Grievances & Real-Time Tracking
+   ========================================================================== */
+.citizen-main-split {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+}
+
+.citizen-feed-card {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--slate-200);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 1.25rem;
+}
+
+.ticket-item-card {
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+  background: #ffffff;
+  transition: all var(--transition-fast);
+}
+
+.ticket-item-card:hover {
+  border-color: var(--gov-navy-light);
+  box-shadow: var(--shadow-md);
+}
+
+.ticket-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ticket-id-tag {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--gov-navy-deep);
+  background: var(--slate-100);
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+}
+
+.ticket-item-body h4 {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--slate-900);
+  margin-bottom: 0.35rem;
+}
+
+.ticket-item-body p {
+  font-size: 0.84rem;
+  color: var(--slate-600);
+  line-height: 1.5;
+  margin-bottom: 0.75rem;
+}
+
+.ticket-meta-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 0.75rem;
+  color: var(--slate-500);
+}
+
+.meta-pill-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--slate-50);
+  padding: 3px 8px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--slate-200);
+}
+
+/* Tracking Stepper Widget */
+.tracking-stepper-card {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--slate-200);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 80px;
+}
+
+.stepper-progress {
+  position: relative;
+  padding-left: 28px;
+  margin-top: 1.25rem;
+}
+
+.stepper-progress::before {
+  content: '';
+  position: absolute;
+  left: 9px;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  background: var(--slate-200);
+}
+
+.step-node {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.step-node:last-child {
+  margin-bottom: 0;
+}
+
+.step-dot {
+  position: absolute;
+  left: -28px;
+  top: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid var(--slate-300);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--slate-500);
+}
+
+.step-node.completed .step-dot {
+  background: var(--tiranga-green);
+  border-color: var(--tiranga-green);
+  color: #ffffff;
+}
+
+.step-node.active .step-dot {
+  background: var(--tiranga-saffron);
+  border-color: var(--tiranga-saffron);
+  color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.2);
+}
+
+.step-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--slate-800);
+}
+
+.step-desc {
+  font-size: 0.75rem;
+  color: var(--slate-500);
+  margin-top: 2px;
+}
+
+.step-timestamp {
+  font-size: 0.7rem;
+  color: var(--slate-400);
+  margin-top: 2px;
+  font-family: var(--font-mono);
+}
+
+@media (max-width: 1024px) {
+  .citizen-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .action-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .citizen-main-split {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .citizen-hero {
+    padding: 1.5rem;
+  }
+
+  .hero-headline {
+    font-size: 1.6rem;
+  }
+
+  .citizen-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .action-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- officer-dashboard.css --- */
+/* JanSeva AI - Officer AI Command Center Styles */
+
+/* ==========================================================================
+   Officer Executive Bar & Live SLA Breach Alert
+   ========================================================================== */
+.officer-banner-alert {
+  background: linear-gradient(90deg, #7f1d1d, #991b1b);
+  color: #fef2f2;
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 12px rgba(153, 27, 27, 0.25);
+  margin-bottom: 1.5rem;
+  border-left: 5px solid #ef4444;
+}
+
+.alert-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.alert-icon {
+  background: rgba(255, 255, 255, 0.2);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.alert-text h5 {
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.alert-text p {
+  font-size: 0.78rem;
+  opacity: 0.9;
+}
+
+.alert-btn {
+  background: #ffffff;
+  color: #991b1b;
+  border: none;
+  padding: 6px 14px;
+  border-radius: var(--radius-xs);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Officer KPI Cards Strip
+   ========================================================================== */
+.officer-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.officer-kpi-card {
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--slate-200);
+  padding: 1.1rem 1.2rem;
+  box-shadow: var(--shadow-xs);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.officer-kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--slate-300);
+}
+
+.officer-kpi-card.crit::before {
+  background: #ef4444;
+}
+
+.officer-kpi-card.clust::before {
+  background: #8b5cf6;
+}
+
+.officer-kpi-card.sla::before {
+  background: #f59e0b;
+}
+
+.officer-kpi-card.res::before {
+  background: #10b981;
+}
+
+.officer-kpi-card.acc::before {
+  background: #0284c7;
+}
+
+.officer-kpi-card .kpi-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--slate-500);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.officer-kpi-card .kpi-number {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--slate-900);
+  margin: 4px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.kpi-delta {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+}
+
+.kpi-delta.pos {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.kpi-delta.neg {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.kpi-delta.neutral {
+  background: #f1f5f9;
+  color: var(--slate-600);
+}
+
+.officer-kpi-card .kpi-sub {
+  font-size: 0.72rem;
+  color: var(--slate-400);
+}
+
+/* ==========================================================================
+   GIS Map & Real-Time Analytics Split Section
+   ========================================================================== */
+.gis-analytics-split {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.gis-map-panel {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--slate-200);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.gis-header-bar {
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid var(--slate-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--slate-50);
+}
+
+.gis-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--gov-navy-deep);
+}
+
+.gis-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gis-filter-select {
+  font-size: 0.78rem;
+  padding: 4px 8px;
+  border: 1px solid var(--slate-300);
+  border-radius: var(--radius-xs);
+  background: #fff;
+  color: var(--slate-700);
+  outline: none;
+}
+
+.gis-map-container {
+  height: 380px;
+  width: 100%;
+  background: #0f172a;
+  position: relative;
+}
+
+#gisMapLeaflet {
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+}
+
+.map-floating-legend {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.72rem;
+  z-index: 10;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+/* GIS Side Analytics Widgets */
+.gis-side-widgets {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.widget-box {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--slate-200);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  flex: 1;
+}
+
+.widget-box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.widget-box-header h4 {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--gov-navy-deep);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Category Progress Bars */
+.cat-progress-item {
+  margin-bottom: 0.75rem;
+}
+
+.cat-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--slate-700);
+  margin-bottom: 3px;
+}
+
+.cat-progress-bar-bg {
+  height: 8px;
+  background: var(--slate-100);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.cat-progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.6s ease;
+}
+
+/* ==========================================================================
+   Master Ticket Matrix & Triage Table
+   ========================================================================== */
+.triage-table-panel {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--slate-200);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.triage-table-toolbar {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--slate-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: var(--slate-50);
+}
+
+.triage-filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.filter-pill-btn {
+  border: 1px solid var(--slate-300);
+  background: #ffffff;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--slate-600);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.filter-pill-btn.active {
+  background: var(--gov-navy-deep);
+  color: #ffffff;
+  border-color: var(--gov-navy-deep);
+}
+
+.triage-search-input {
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  border: 1px solid var(--slate-300);
+  border-radius: var(--radius-xs);
+  outline: none;
+  min-width: 220px;
+}
+
+/* Data Table */
+.data-table-container {
+  overflow-x: auto;
+}
+
+.triage-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  text-align: left;
+}
+
+.triage-table th {
+  background: #f8fafc;
+  padding: 10px 14px;
+  font-weight: 700;
+  color: var(--slate-600);
+  border-bottom: 1px solid var(--slate-200);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.triage-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--slate-200);
+  color: var(--slate-700);
+  vertical-align: middle;
+}
+
+.triage-table tr:hover td {
+  background: #f8fafc;
+  cursor: pointer;
+}
+
+.ticket-cell-id {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--gov-navy-deep);
+}
+
+.ticket-cell-title {
+  font-weight: 600;
+  color: var(--slate-900);
+  display: block;
+}
+
+.ticket-cell-sub {
+  font-size: 0.74rem;
+  color: var(--slate-500);
+}
+
+.sla-countdown-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+}
+
+.sla-countdown-tag.breaching {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+  animation: pulseCrit 2s infinite;
+}
+
+.sla-countdown-tag.normal {
+  background: #f1f5f9;
+  color: var(--slate-700);
+}
+
+/* ==========================================================================
+   Ticket Inspection / XAI Detail Drawer (Right Sidebar Modal)
+   ========================================================================== */
+.drawer-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 10000;
+  display: none;
+  justify-content: flex-end;
+  animation: fadeIn 200ms ease;
+}
+
+.drawer-backdrop.open {
+  display: flex;
+}
+
+.drawer-sheet {
+  width: 680px;
+  max-width: 95vw;
+  height: 100vh;
+  background: #ffffff;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  animation: slideLeft 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+@keyframes slideLeft {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+.drawer-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--slate-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--gov-navy-deep);
+  color: #fff;
+}
+
+.drawer-header h3 {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.drawer-close-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.drawer-body {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.drawer-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--slate-200);
+  background: var(--slate-50);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (max-width: 1100px) {
+  .officer-kpi-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .gis-analytics-split {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .officer-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- components.css --- */
+/* JanSeva AI - Components: XAI, Voice Waveform, CV Bounding Box, Saathi AI Chat */
+
+/* ==========================================================================
+   Explainable AI (XAI) Rubric & Feature Attribution
+   ========================================================================== */
+.xai-audit-card {
+  background: #f8fafc;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--slate-200);
+  padding: 1.25rem;
+}
+
+.xai-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.xai-title {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--gov-navy-deep);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.xai-score-pill {
+  font-size: 0.82rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+}
+
+.xai-reason-summary {
+  font-size: 0.82rem;
+  color: var(--slate-700);
+  line-height: 1.5;
+  background: #ffffff;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--slate-200);
+  margin-bottom: 1rem;
+}
+
+.xai-factor-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.xai-factor-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.78rem;
+}
+
+.factor-name {
+  color: var(--slate-600);
+  font-weight: 600;
+  flex: 1;
+}
+
+.factor-bar-wrapper {
+  flex: 1.5;
+  margin: 0 12px;
+  height: 6px;
+  background: var(--slate-200);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.factor-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--tiranga-saffron);
+}
+
+.factor-impact {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--slate-800);
+  width: 48px;
+  text-align: right;
+}
+
+/* ==========================================================================
+   Voice Grievance Modal & Audio Waveform Visualizer
+   ========================================================================== */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(6px);
+  z-index: 10000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: fadeIn 200ms ease;
+}
+
+.modal-backdrop.open {
+  display: flex;
+}
+
+.modal-dialog {
+  background: #ffffff;
+  border-radius: var(--radius-xl);
+  width: 680px;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--slate-200);
+  display: flex;
+  flex-direction: column;
+  animation: scaleUp 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  padding: 1.25rem 1.75rem;
+  border-bottom: 1px solid var(--slate-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+}
+
+.modal-header h3 {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--gov-navy-deep);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-close-btn {
+  background: var(--slate-100);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  color: var(--slate-600);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.modal-close-btn:hover {
+  background: var(--slate-200);
+  color: var(--slate-900);
+}
+
+.modal-body {
+  padding: 1.5rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Waveform Canvas & Pulse Mic */
+.voice-wave-container {
+  background: linear-gradient(135deg, var(--gov-navy-deep) 0%, var(--gov-navy-dark) 100%);
+  border-radius: var(--radius-lg);
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.waveform-canvas {
+  width: 100%;
+  height: 80px;
+  margin-bottom: 1rem;
+}
+
+.mic-circle-btn {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: #ffffff;
+  border: none;
+  font-size: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.7);
+  transition: all var(--transition-fast);
+}
+
+.mic-circle-btn.recording {
+  animation: pulseMic 1.5s infinite;
+  background: #ef4444;
+}
+
+@keyframes pulseMic {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+
+  70% {
+    box-shadow: 0 0 0 20px rgba(239, 68, 68, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.voice-sample-prompts {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.voice-sample-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  color: #fff;
+  font-size: 0.78rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.voice-sample-btn:hover {
+  background: rgba(249, 115, 22, 0.3);
+  border-color: var(--tiranga-saffron);
+}
+
+/* Real-time Transcription Stream */
+.transcript-card {
+  background: #f8fafc;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+}
+
+.transcript-header {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--slate-500);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.transcript-text {
+  font-size: 0.88rem;
+  color: var(--slate-800);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.ai-extraction-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.extraction-pill {
+  background: #ffffff;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-xs);
+  padding: 6px 10px;
+  font-size: 0.75rem;
+}
+
+.extraction-pill .label {
+  font-size: 0.68rem;
+  color: var(--slate-400);
+  display: block;
+}
+
+.extraction-pill .val {
+  font-weight: 700;
+  color: var(--gov-navy-deep);
+}
+
+/* ==========================================================================
+   Computer Vision Hazard Photo Scanner with Bounding Box Overlay
+   ========================================================================== */
+.photo-scan-view {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--slate-300);
+  background: #0f172a;
+}
+
+.photo-scan-image {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  display: block;
+}
+
+.cv-bounding-box {
+  position: absolute;
+  top: 35%;
+  left: 30%;
+  width: 38%;
+  height: 40%;
+  border: 2px solid #ef4444;
+  background: rgba(239, 68, 68, 0.15);
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.cv-tag {
+  position: absolute;
+  top: -24px;
+  left: -2px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   JanSeva Saathi - Floating AI Assistant
+   ========================================================================== */
+.saathi-floating-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: linear-gradient(135deg, var(--gov-navy-deep), var(--gov-navy-base));
+  color: #ffffff;
+  border: 2px solid var(--tiranga-saffron);
+  border-radius: var(--radius-full);
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 10px 25px rgba(9, 30, 58, 0.35);
+  cursor: pointer;
+  z-index: 9990;
+  font-weight: 700;
+  font-size: 0.85rem;
+  transition: transform var(--transition-fast);
+}
+
+.saathi-floating-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(9, 30, 58, 0.45);
+}
+
+.saathi-avatar-mini {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--tiranga-saffron);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.saathi-chat-window {
+  position: fixed;
+  bottom: 84px;
+  right: 24px;
+  width: 380px;
+  max-width: 90vw;
+  height: 520px;
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.25);
+  border: 1px solid var(--slate-200);
+  z-index: 9995;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slideUp 200ms ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.saathi-chat-window.open {
+  display: flex;
+}
+
+.saathi-header {
+  background: var(--gov-navy-deep);
+  color: #fff;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.saathi-header h4 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.saathi-messages {
+  flex: 1;
+  padding: 14px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--slate-50);
+}
+
+.chat-bubble {
+  max-width: 85%;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.chat-bubble.bot {
+  background: #ffffff;
+  border: 1px solid var(--slate-200);
+  color: var(--slate-800);
+  align-self: flex-start;
+  border-bottom-left-radius: 2px;
+}
+
+.chat-bubble.user {
+  background: var(--gov-navy-base);
+  color: #ffffff;
+  align-self: flex-end;
+  border-bottom-right-radius: 2px;
+}
+
+.saathi-input-bar {
+  padding: 10px 14px;
+  background: #ffffff;
+  border-top: 1px solid var(--slate-200);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.saathi-input-field {
+  flex: 1;
+  border: 1px solid var(--slate-300);
+  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  font-size: 0.82rem;
+  outline: none;
+}
+
+.saathi-send-btn {
+  background: var(--tiranga-saffron);
+  border: none;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   Toast Notification System
+   ========================================================================== */
+.toast-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 11000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--gov-navy-deep);
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  font-size: 0.84rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+  animation: slideDownToast 200ms ease;
+  border-left: 4px solid var(--tiranga-saffron);
+}
+
+@keyframes slideDownToast {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   Responsive Overrides (SIH Production Redesign)
+   ========================================================================== */
+
+.mobile-menu-btn {
+  display: none;
+  background: var(--gov-navy-deep);
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+.triage-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 900px) {
+  .gov-top-ribbon {
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    text-align: center;
+  }
+
+  .gov-top-right {
+    justify-content: center;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .header-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 0.75rem 1rem;
+  }
+
+  .mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+  }
+
+  .portal-nav-tabs {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    margin-top: 10px;
+    background: #fff;
+    border: none;
+    padding: 0;
+    gap: 4px;
+  }
+
+  .portal-nav-tabs.menu-open {
+    display: flex;
+  }
+
+  .nav-tab-btn {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 12px 16px;
+    border: 1px solid var(--slate-200);
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+
+  .citizen-hero {
+    padding: 1.5rem;
+  }
+
+  .hero-headline {
+    font-size: 1.6rem;
+  }
+
+  .hero-search-wrapper {
+    flex-wrap: wrap;
+    padding: 12px;
+    border-radius: var(--radius-md);
+  }
+
+  .hero-search-input {
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 10px;
+    min-height: 44px;
+    border-radius: var(--radius-sm);
+    border: 1px solid #ccc;
+  }
+
+  .hero-voice-trigger {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+  }
+
+  .hero-search-btn {
+    flex: 1;
+    min-height: 44px;
+  }
+
+  .ticket-meta-pills {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .ticket-meta-pills .meta-pill-item {
+    width: 100%;
+  }
+
+  .citizen-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .triage-table {
+    min-width: 800px;
+  }
+
+  #gisMapLeaflet {
+    min-height: 350px !important;
+  }
+
+  .drawer-backdrop {
+    align-items: flex-end;
+  }
+
+  .drawer-sheet {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 85vh;
+    border-radius: 20px 20px 0 0;
+    animation: slideUp 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+    }
+
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  .modal-dialog {
+    width: 95% !important;
+    max-height: 90vh;
+    padding: 1.5rem;
+    overflow-y: auto;
+  }
+}
+
+/* ==========================================================================
+   Second Pass UI/UX Polish
+   ========================================================================== */
+
+/* Timeline Stepper Polish */
+.step-node {
+  padding: 1rem 1rem 1rem 1.5rem;
+  border-left: 3px solid var(--slate-200);
+  margin-left: 10px;
+  position: relative;
+  transition: all 0.3s;
+}
+
+.step-node:hover {
+  background: var(--slate-50);
+  border-radius: 0 8px 8px 0;
+}
+
+.step-node.completed {
+  border-left-color: var(--tiranga-green);
+}
+
+.step-node.active {
+  border-left-color: var(--tiranga-saffron);
+}
+
+.step-node .step-dot {
+  position: absolute;
+  left: -15px;
+  top: 1rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid var(--slate-300);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.8rem;
+  color: var(--slate-400);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+}
+
+.step-node.completed .step-dot {
+  background: var(--tiranga-green);
+  border-color: #fff;
+  color: #fff;
+  box-shadow: 0 0 0 3px var(--tiranga-green);
+}
+
+.step-node.active .step-dot {
+  background: var(--tiranga-saffron);
+  border-color: #fff;
+  color: #fff;
+  box-shadow: 0 0 0 3px var(--tiranga-saffron), 0 4px 12px rgba(249, 115, 22, 0.4);
+}
+
+.step-node .step-title {
+  font-weight: 700;
+  color: var(--gov-navy-deep);
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.step-node .step-desc {
+  font-size: 0.82rem;
+  color: var(--slate-500);
+  margin-bottom: 4px;
+}
+
+.step-node .step-timestamp {
+  font-size: 0.75rem;
+  color: var(--slate-400);
+  font-style: italic;
+}
+
+/* GIS Command Center Styling */
+#view-analytics {
+  background: var(--slate-50);
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+}
+
+#gisMapLeaflet {
+  border-radius: var(--radius-lg);
+  border: 4px solid #fff;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Button & Card Micro-Interactions */
+.btn {
+  transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.action-card {
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+  border: 1px solid var(--slate-200);
+}
+
+.action-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+  border-color: var(--slate-300);
+}
+
+/* Inputs */
+input,
+select,
+textarea {
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--gov-navy-deep);
+  box-shadow: 0 0 0 3px rgba(9, 30, 58, 0.1);
+  outline: none;
+}

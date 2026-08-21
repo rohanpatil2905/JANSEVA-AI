@@ -1,0 +1,178 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+function SubmitComplaint() {
+    const navigate = useNavigate();
+
+    const [formData, setFormData] = useState({
+        title: "",
+        description: "",
+        category: "",
+        location: "",
+    });
+
+    const [image, setImage] = useState(null);
+
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
+    };
+
+    const handleImageChange = (event) => {
+        setImage(event.target.files[0]);
+    };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+
+        if (
+            !formData.title ||
+            !formData.description ||
+            !formData.category ||
+            !formData.location
+        ) {
+            alert("Please fill all required fields.");
+            return;
+        }
+
+        const complaintData = {
+            ...formData,
+            image: image,
+        };
+
+        console.log("Complaint Data:", complaintData);
+
+        navigate("/preview", {
+            state: complaintData,
+        });
+    };
+
+    return (
+        <div className="complaint-page">
+
+            <h1>Submit a Complaint</h1>
+
+            <p>
+                Report a civic issue and provide the necessary details.
+            </p>
+
+            <form onSubmit={handleSubmit}>
+
+                {/* Title */}
+
+                <div>
+                    <label>Complaint Title</label>
+
+                    <input
+                        type="text"
+                        name="title"
+                        value={formData.title}
+                        onChange={handleChange}
+                        placeholder="Example: Pothole on Main Road"
+                    />
+                </div>
+
+
+                {/* Description */}
+
+                <div>
+                    <label>Complaint Description</label>
+
+                    <textarea
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
+                        placeholder="Describe the problem..."
+                        rows="5"
+                    />
+                </div>
+
+
+                {/* Category */}
+
+                <div>
+                    <label>Category</label>
+
+                    <select
+                        name="category"
+                        value={formData.category}
+                        onChange={handleChange}
+                    >
+
+                        <option value="">
+                            Select Category
+                        </option>
+
+                        <option value="Road">
+                            Road
+                        </option>
+
+                        <option value="Water Supply">
+                            Water Supply
+                        </option>
+
+                        <option value="Garbage">
+                            Garbage
+                        </option>
+
+                        <option value="Streetlight">
+                            Streetlight
+                        </option>
+
+                        <option value="Drainage">
+                            Drainage
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+
+                    </select>
+                </div>
+
+
+                {/* Location */}
+
+                <div>
+                    <label>Location</label>
+
+                    <input
+                        type="text"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleChange}
+                        placeholder="Enter complaint location"
+                    />
+                </div>
+
+
+                {/* Image */}
+
+                <div>
+                    <label>Upload Image (Optional)</label>
+
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                    />
+                </div>
+
+
+                {/* Submit */}
+
+                <button type="submit">
+                    Review Complaint
+                </button>
+
+            </form>
+
+        </div>
+    );
+}
+
+export default SubmitComplaint;

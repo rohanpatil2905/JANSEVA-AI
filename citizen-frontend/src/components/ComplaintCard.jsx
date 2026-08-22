@@ -7,10 +7,9 @@ function ComplaintCard({ complaint = {} }) {
 	return (
 		<article className="complaint-card">
 			<header>
-				<p>
-					<strong>Complaint ID:</strong> {complaintId}
-				</p>
+				<p className="complaint-id">{complaintId}</p>
 				<h2>{title}</h2>
+				<span className={`status-badge status-${(complaint.status || "unknown").toLowerCase().replaceAll(" ", "-")}`}>{complaint.status || "Not available"}</span>
 			</header>
 
 			<dl>
@@ -21,9 +20,7 @@ function ComplaintCard({ complaint = {} }) {
 				<div>
 					<dt>Status</dt>
 					<dd>
-						<strong aria-label={`Complaint status: ${complaint.status || "Not available"}`}>
-							{complaint.status || "Not available"}
-						</strong>
+						<strong aria-label={`Complaint status: ${complaint.status || "Not available"}`}>{complaint.status || "Not available"}</strong>
 					</dd>
 				</div>
 				<div>

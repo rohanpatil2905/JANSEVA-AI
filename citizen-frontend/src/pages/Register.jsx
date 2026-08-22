@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 
 function Register() {
     const navigate = useNavigate();
@@ -45,9 +45,11 @@ function Register() {
             return;
         }
 
-        register(formData);
-
-        alert("Registration successful!");
+        const result = register(formData);
+        if (!result.success) {
+            setError(result.message);
+            return;
+        }
 
         navigate("/login");
     };
@@ -60,9 +62,10 @@ function Register() {
             <form onSubmit={handleSubmit}>
 
                 <div>
-                    <label>Name</label>
+                    <label htmlFor="register-name">Name</label>
 
                     <input
+                        id="register-name"
                         type="text"
                         name="name"
                         value={formData.name}
@@ -72,9 +75,10 @@ function Register() {
                 </div>
 
                 <div>
-                    <label>Email</label>
+                    <label htmlFor="register-email">Email</label>
 
                     <input
+                        id="register-email"
                         type="email"
                         name="email"
                         value={formData.email}
@@ -84,9 +88,10 @@ function Register() {
                 </div>
 
                 <div>
-                    <label>Password</label>
+                    <label htmlFor="register-password">Password</label>
 
                     <input
+                        id="register-password"
                         type="password"
                         name="password"
                         value={formData.password}

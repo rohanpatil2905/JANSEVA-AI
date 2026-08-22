@@ -13,6 +13,8 @@ import ComplaintDetails from "./pages/ComplaintDetails";
 import TrackComplaint from "./pages/TrackComplaint";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import OfficialDashboard from "./pages/OfficialDashboard";
+import Footer from "./components/Footer";
 
 function App() {
   return (
@@ -26,7 +28,14 @@ function App() {
 
         <Route path="/register" element={<Register />} />
 
-        <Route path="/language" element={<Language />} />
+        <Route
+          path="/language"
+          element={
+            <ProtectedRoute>
+              <Language />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="/submit-complaint"
@@ -39,7 +48,11 @@ function App() {
 
         <Route
           path="/preview"
-          element={<ComplaintPreview />}
+          element={
+            <ProtectedRoute>
+              <ComplaintPreview />
+            </ProtectedRoute>
+          }
         />
 
         <Route
@@ -70,10 +83,20 @@ function App() {
         />
 
         <Route
+          path="/official"
+          element={
+            <ProtectedRoute>
+              <OfficialDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="*"
           element={<NotFound />}
         />
       </Routes>
+      <Footer />
     </>
   );
 }

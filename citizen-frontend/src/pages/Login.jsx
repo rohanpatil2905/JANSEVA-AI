@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useAuth } from "../context/useAuth";
 
 function Login() {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const { login } = useAuth();
 
@@ -29,9 +30,7 @@ function Login() {
             return;
         }
 
-        alert("Login successful!");
-
-        navigate("/");
+        navigate(location.state?.from?.pathname || "/", { replace: true });
     };
 
     return (
@@ -42,9 +41,10 @@ function Login() {
             <form onSubmit={handleSubmit}>
 
                 <div>
-                    <label>Email</label>
+                    <label htmlFor="login-email">Email</label>
 
                     <input
+                        id="login-email"
                         type="email"
                         value={email}
                         onChange={(event) =>
@@ -55,9 +55,10 @@ function Login() {
                 </div>
 
                 <div>
-                    <label>Password</label>
+                    <label htmlFor="login-password">Password</label>
 
                     <input
+                        id="login-password"
                         type="password"
                         value={password}
                         onChange={(event) =>

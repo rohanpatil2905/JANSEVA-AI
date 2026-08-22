@@ -8,16 +8,10 @@ function Home() {
             <section className="hero-section">
                 <div className="hero-content">
 
-                    <h1>JanSeva AI</h1>
+                    <p className="eyebrow">Your voice. Your neighbourhood. Your city.</p>
+                    <h1>Small reports can create <em>big civic change.</em></h1>
 
-                    <h2>
-                        AI-Powered Citizen Complaint Management
-                    </h2>
-
-                    <p>
-                        Report civic issues easily, submit complaints in your
-                        preferred language, and track their resolution.
-                    </p>
+                    <p className="hero-lede">JanSeva AI helps you report local issues in your language, understand what happens next, and stay informed until your complaint is resolved.</p>
 
                     <div className="hero-buttons">
 
@@ -25,14 +19,14 @@ function Home() {
                             to="/submit-complaint"
                             className="primary-button"
                         >
-                            Submit Complaint
+                            Report an issue
                         </Link>
 
                         <Link
                             to="/my-complaints"
                             className="secondary-button"
                         >
-                            Track Complaint
+                            See my complaints
                         </Link>
 
                     </div>
@@ -44,12 +38,12 @@ function Home() {
             {/* Features Section */}
             <section className="features-section">
 
-                <h2>Citizen Services</h2>
+                <div className="section-heading"><p className="eyebrow">Made for real life</p><h2>Everything you need to be heard</h2><p>One clear place to raise a concern and follow it through.</p></div>
 
                 <div className="features-grid">
 
                     <div className="feature-card">
-                        <h3>📝 Submit Complaint</h3>
+                        <span className="feature-number">01</span><h3>Report in minutes</h3>
 
                         <p>
                             Report civic problems such as road damage,
@@ -63,7 +57,7 @@ function Home() {
 
 
                     <div className="feature-card">
-                        <h3>🔍 Track Complaint</h3>
+                        <span className="feature-number">02</span><h3>Follow every update</h3>
 
                         <p>
                             Track your complaint status and view updates
@@ -77,7 +71,7 @@ function Home() {
 
 
                     <div className="feature-card">
-                        <h3>🌐 Multiple Languages</h3>
+                        <span className="feature-number">03</span><h3>Use your language</h3>
 
                         <p>
                             Interact with the platform using your preferred
@@ -97,13 +91,13 @@ function Home() {
             {/* How It Works */}
             <section className="how-section">
 
-                <h2>How JanSeva AI Works</h2>
+                <div className="section-heading"><p className="eyebrow">A transparent process</p><h2>From your words to meaningful action</h2></div>
 
                 <div className="steps">
 
                     <div className="step">
                         <span>1</span>
-                        <h3>Report</h3>
+                        <h3>Describe</h3>
                         <p>
                             Citizen submits a civic complaint.
                         </p>
@@ -111,7 +105,7 @@ function Home() {
 
                     <div className="step">
                         <span>2</span>
-                        <h3>AI Analysis</h3>
+                        <h3>Understand</h3>
                         <p>
                             AI helps categorize and process the complaint.
                         </p>
@@ -119,7 +113,7 @@ function Home() {
 
                     <div className="step">
                         <span>3</span>
-                        <h3>Assignment</h3>
+                        <h3>Route</h3>
                         <p>
                             Complaint is forwarded to the appropriate department.
                         </p>
@@ -127,7 +121,7 @@ function Home() {
 
                     <div className="step">
                         <span>4</span>
-                        <h3>Resolution</h3>
+                        <h3>Resolve</h3>
                         <p>
                             Citizen can track the complaint until resolution.
                         </p>
@@ -135,6 +129,11 @@ function Home() {
 
                 </div>
 
+            </section>
+
+            <section className="ai-section">
+                <div><p className="eyebrow">Human-led, AI-assisted</p><h2>Clarity for citizens. Better context for officials.</h2><p>JanSeva AI can suggest a category, department, priority, and short summary from your complaint. Suggestions remain reviewable, while your original words stay exactly as you wrote them.</p></div>
+                <div className="ai-list"><span>Language understanding</span><span>Category suggestion</span><span>Department routing</span><span>Priority recommendation</span></div>
             </section>
 
         </div>

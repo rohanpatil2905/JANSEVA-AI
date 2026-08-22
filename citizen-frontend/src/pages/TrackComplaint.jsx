@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom";
-import { useComplaints } from "../context/ComplaintContext";
-import { useAuth } from "../context/AuthContext";
+import { useComplaints } from "../context/useComplaints";
+import { useAuth } from "../context/useAuth";
+import StatusTimeline from "../components/StatusTimeline";
 
 function TrackComplaint() {
     const { id } = useParams();
@@ -31,17 +32,6 @@ function TrackComplaint() {
         );
     }
 
-    const statuses = [
-        "Submitted",
-        "Under Review",
-        "Assigned",
-        "In Progress",
-        "Resolved",
-    ];
-
-    const currentStatusIndex =
-        statuses.indexOf(complaint.status);
-
     return (
         <div className="track-page">
 
@@ -71,77 +61,13 @@ function TrackComplaint() {
                     {complaint.status}
                 </p>
 
-            </div>
-
-
-            <div className="status-timeline">
-
-                <h2>Complaint Status</h2>
-
-                {statuses.map((status, index) => {
-
-                    const isCompleted =
-                        index <= currentStatusIndex;
-
-                    return (
-                        <div
-                            className={`timeline-item ${isCompleted
-                                ? "completed"
-                                : ""
-                                }`}
-                            key={status}
-                        >
-
-                            <div className="timeline-number">
-                                {index + 1}
-                            </div>
-
-                            <div className="timeline-content">
-
-                                <h3>{status}</h3>
-
-                                {index === 0 && (
-                                    <p>
-                                        Your complaint has been successfully
-                                        submitted.
-                                    </p>
-                                )}
-
-                                {index === 1 && (
-                                    <p>
-                                        The complaint is being reviewed by
-                                        the concerned department.
-                                    </p>
-                                )}
-
-                                {index === 2 && (
-                                    <p>
-                                        The complaint has been assigned to
-                                        the appropriate department.
-                                    </p>
-                                )}
-
-                                {index === 3 && (
-                                    <p>
-                                        Work is currently being carried out
-                                        to resolve the issue.
-                                    </p>
-                                )}
-
-                                {index === 4 && (
-                                    <p>
-                                        The complaint has been marked as
-                                        resolved.
-                                    </p>
-                                )}
-
-                            </div>
-
-                        </div>
-                    );
-                })}
+                {complaint.updatedAt && <p><strong>Last updated:</strong>{" "}{complaint.updatedAt}</p>}
 
             </div>
+
+
+            <h2>Complaint Status</h2>
+            <StatusTimeline status={complaint.status} statusHistory={complaint.statusHistory || []} />
 
 
             <Link

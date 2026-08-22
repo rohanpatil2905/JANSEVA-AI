@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useLanguage } from "../context/LanguageContext";
+import { useLanguage } from "../context/useLanguage";
 
 const nativeNames = {
     en: "English",
@@ -8,7 +8,7 @@ const nativeNames = {
 };
 
 function Language() {
-    const { languages, selectedLanguage, setSelectedLanguage } =
+    const { languages, selectedLanguage, setSelectedLanguage, t } =
         useLanguage();
 
     const navigate = useNavigate();
@@ -21,7 +21,7 @@ function Language() {
         <main className="language-page">
             <section className="language-card">
 
-                <h1>Choose Your Language</h1>
+                <h1>{t("language.choose")}</h1>
 
                 <p className="language-subtext">
                     Select your preferred language to continue
@@ -75,7 +75,7 @@ function Language() {
                     className="language-continue"
                     onClick={handleContinue}
                 >
-                    Continue
+                    {t("language.continue")}
                 </button>
 
             </section>

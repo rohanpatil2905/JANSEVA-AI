@@ -1,6 +1,6 @@
 import { Link, useParams } from "react-router-dom";
-import { useComplaints } from "../context/ComplaintContext";
-import { useAuth } from "../context/AuthContext";
+import { useComplaints } from "../context/useComplaints";
+import { useAuth } from "../context/useAuth";
 
 function ComplaintDetails() {
     const { id } = useParams();
@@ -65,6 +65,20 @@ function ComplaintDetails() {
                     <strong>Submitted:</strong>{" "}
                     {complaint.createdAt}
                 </p>
+
+                {complaint.updatedAt && <p><strong>Last updated:</strong>{" "}{complaint.updatedAt}</p>}
+
+                {(complaint.aiCategory || complaint.aiDepartment || complaint.aiPriority || complaint.aiSummary) && (
+                    <section className="ai-recommendation" aria-labelledby="ai-heading">
+                        <p className="eyebrow">AI assistance</p>
+                        <h2 id="ai-heading">Suggestions for review</h2>
+                        <p>These recommendations help organize the complaint and are not final decisions.</p>
+                        {complaint.aiCategory && <p><strong>Suggested category:</strong> {complaint.aiCategory}</p>}
+                        {complaint.aiDepartment && <p><strong>Suggested department:</strong> {complaint.aiDepartment}</p>}
+                        {complaint.aiPriority && <p><strong>Suggested priority:</strong> {complaint.aiPriority}</p>}
+                        {complaint.aiSummary && <p><strong>Summary:</strong> {complaint.aiSummary}</p>}
+                    </section>
+                )}
 
                 <Link to={`/track/${complaint.id}`}>
                     Track Complaint

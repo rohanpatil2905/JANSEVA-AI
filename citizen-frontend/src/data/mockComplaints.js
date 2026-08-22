@@ -7,6 +7,13 @@ const mockComplaints = [
         category: "Roads",
         status: "In Progress",
         createdAt: "2025-08-10",
+        userEmail: "demo@janseva.ai",
+        statusHistory: [
+            { status: "Submitted", timestamp: "2025-08-10T08:00:00.000Z" },
+            { status: "Under Review", timestamp: "2025-08-11T08:00:00.000Z" },
+            { status: "Assigned", timestamp: "2025-08-12T08:00:00.000Z" },
+            { status: "In Progress", timestamp: "2025-08-13T08:00:00.000Z" },
+        ],
         location: "MG Road, Near Central Bus Stop, Pune",
     },
     {
@@ -17,6 +24,7 @@ const mockComplaints = [
         category: "Water Supply",
         status: "Assigned",
         createdAt: "2025-08-12",
+        userEmail: "demo@janseva.ai",
         location: "Shivaji Nagar, Ward 12, Pune",
     },
     {
@@ -27,6 +35,7 @@ const mockComplaints = [
         category: "Sanitation",
         status: "Under Review",
         createdAt: "2025-08-14",
+        userEmail: "demo@janseva.ai",
         location: "Laxmi Chowk, Nagpur",
     },
     {
@@ -37,6 +46,7 @@ const mockComplaints = [
         category: "Street Lights",
         status: "Submitted",
         createdAt: "2025-08-16",
+        userEmail: "demo@janseva.ai",
         location: "Station Road, Nashik",
     },
     {
@@ -47,6 +57,7 @@ const mockComplaints = [
         category: "Drainage",
         status: "Resolved",
         createdAt: "2025-08-05",
+        userEmail: "demo@janseva.ai",
         location: "Ambedkar Garden, Solapur",
     },
     {
@@ -57,6 +68,7 @@ const mockComplaints = [
         category: "Public Safety",
         status: "In Progress",
         createdAt: "2025-08-08",
+        userEmail: "demo@janseva.ai",
         location: "Nehru Park, East Side, Aurangabad",
     },
 ];

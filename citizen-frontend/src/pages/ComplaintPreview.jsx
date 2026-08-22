@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useComplaints } from "../context/ComplaintContext";
-import { useAuth } from "../context/AuthContext";
+import { useComplaints } from "../context/useComplaints";
+import { useAuth } from "../context/useAuth";
+import { useState } from "react";
 
 function ComplaintPreview() {
     const location = useLocation();
@@ -8,6 +9,7 @@ function ComplaintPreview() {
     const { user } = useAuth();
 
     const { addComplaint } = useComplaints();
+    const [submitting, setSubmitting] = useState(false);
 
     const complaint = location.state;
 
@@ -26,11 +28,10 @@ function ComplaintPreview() {
     }
 
     const handleSubmit = () => {
-        const complaintId =
-            "JS-" + Math.floor(1000 + Math.random() * 9000);
+        if (submitting) return;
+        setSubmitting(true);
 
         const newComplaint = {
-            id: complaintId,
             title: complaint.title,
             description: complaint.description,
             category: complaint.category,
@@ -39,17 +40,13 @@ function ComplaintPreview() {
                 ? complaint.image.name
                 : null,
             status: "Submitted",
-            createdAt: new Date().toLocaleDateString(),
-            userEmail: user.email,
+            userEmail: user.email.toLowerCase(),
         };
 
-        addComplaint(newComplaint);
-
-        alert(
-            `Complaint submitted successfully!\nComplaint ID: ${complaintId}`
-        );
+        const savedComplaint = addComplaint(newComplaint);
 
         navigate("/my-complaints");
+        return savedComplaint;
     };
 
     return (
@@ -94,8 +91,8 @@ function ComplaintPreview() {
                         Edit
                     </button>
 
-                    <button onClick={handleSubmit}>
-                        Submit Complaint
+                    <button onClick={handleSubmit} disabled={submitting}>
+                        {submitting ? "Submitting..." : "Submit Complaint"}
                     </button>
 
                 </div>

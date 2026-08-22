@@ -199,6 +199,138 @@ File: `citizen-frontend/src/services/api.js`
 6. Test language persistence after reload.
 7. Start the development server and manually verify the primary user journey.
 
+## Current Progress: Full Prototype Delivery
+
+**Updated:** 2026-08-22
+
+### Frontend completed
+
+- Fixed the context/provider architecture by keeping `AuthContext`, `ComplaintContext`, and `LanguageContext` separate from `useAuth`, `useComplaints`, and `useLanguage`.
+- Added safe complaint initialization from local storage with mock data fallback and invalid JSON recovery.
+- Added sample complaint ownership for `demo@janseva.ai`.
+- Added stable prototype complaint IDs, `createdAt`, `updatedAt`, and `statusHistory`.
+- Completed complaint validation, preview, edit navigation, confirmation, duplicate-submit protection, details, and tracking.
+- Replaced duplicated complaint markup with the reusable `ComplaintCard` component.
+- Implemented the reusable `StatusTimeline` component with support for old complaints without history.
+- Added protected routes, intended-route return after login, logout, dynamic navigation, role-aware official access, and malformed authentication-storage recovery.
+- Added English, Hindi, and Marathi translation dictionaries connected through `LanguageContext` and persisted language selection.
+- Added responsive styling for the citizen screens and official dashboard.
+- Added environment-based `api.js`, `authService.js`, and `complaintService.js` modules using `VITE_API_BASE_URL`.
+
+### Backend completed
+
+- Created `citizen-backend` as an Express service.
+- Added `GET /api/health`.
+- Added registration and login with bcrypt password hashing and JWT credentials.
+- Added authenticated complaint creation, listing, details, ownership checks, and official status updates.
+- Added status history and server-assigned complaint ownership.
+- Added deterministic server-side AI recommendations for language, category, department, priority, and summary.
+- Preserved original complaint text and treated AI output as advisory.
+- Added a development JSON persistence adapter at the ignored `data/store.json` path.
+- Added `.env.example`, `.gitignore`, backend README, and dependency lockfile.
+
+### Official workflow
+
+- Added `OfficialDashboard.jsx` with total/status counts, status filtering, AI recommendation display, and official status updates.
+- Prototype frontend credentials:
+  - Citizen: `demo@janseva.ai` / `demo123`
+  - Official: `official@janseva.ai` / `official123`
+
+### Validation completed
+
+- `citizen-frontend`: `npm run lint` passed.
+- `citizen-frontend`: `npm run build` passed.
+- `citizen-backend`: `npm install` completed with zero vulnerabilities.
+- Backend smoke test passed registration, login, complaint creation, ownership filtering, AI categorization, official login, and status update.
+- `GET http://localhost:5000/api/health` returned `{ "ok": true, "service": "janseva-backend" }`.
+- `http://localhost:5173/` returned HTTP 200.
+- Editor diagnostics reported no errors.
+
+### Local run status
+
+- Frontend: `http://localhost:5173/`
+- Backend: `http://localhost:5000/`
+
+### Remaining production work
+
+- Replace the development JSON adapter with MongoDB, PostgreSQL, or another managed database.
+- Configure a strong production `JWT_SECRET`, production CORS origin, and deployment environment variables.
+- Connect a real server-side AI provider if required; the current heuristic provider is stable for demos and offline development.
+- Add deployed end-to-end tests, responsive browser tests, monitoring, rate limiting, and production security review.
+
+## Steps 25-31 UI/UX Update
+
+**Updated:** 2026-08-22
+
+### UI audit and design system
+
+- Audited the existing home, auth, language, complaint, tracking, official, navigation, and footer surfaces.
+- Added a shared visual system in `citizen-frontend/src/index.css` with civic teal branding, warm accent color, typography scale, spacing, borders, shadows, status badges, form states, focus states, and responsive breakpoints.
+- Added a structured sticky navigation bar with active links, role-aware actions, logout, and a branded footer.
+- Removed reliance on emoji as the primary visual hierarchy on the home page.
+
+### Home page
+
+- Reworked the hero around a clear citizen-first message and the existing report/complaints routes.
+- Added stronger sections for citizen services, the transparent complaint process, and human-led AI assistance.
+- Clearly positioned AI output as suggestions that remain reviewable.
+
+### Complaint experience
+
+- Improved `ComplaintCard` hierarchy with complaint ID and reusable status badges.
+- Improved `StatusTimeline` with current-status emphasis and support for missing/older history.
+- Added AI recommendation disclosure and last-updated metadata to complaint details.
+- Added form helper text, character count, required indicators, and preserved field-level validation.
+- Added consistent responsive card, form, preview, details, and dashboard styling.
+
+### Accessibility and responsive checks
+
+- Added explicit `htmlFor`/`id` associations to login, registration, and complaint form controls.
+- Preserved visible keyboard focus indicators and semantic links/buttons.
+- Added responsive layouts for navigation, cards, statistics, forms, and dashboard content.
+- Browser check at the available narrow viewport reported no horizontal overflow.
+- Browser check confirmed the home and login routes render with expected headings, links, and labeled controls.
+
+### Step 31 architecture status
+
+- Kept the existing React Router, Context API, service modules, routes, API contracts, authentication, and backend unchanged.
+- Added only reusable styling and the existing empty `Footer` component implementation; no broad file move or unnecessary dependency was introduced.
+- The unused Vite starter rules remain isolated in `App.css`, which is not imported by the application; the active UI styling lives in `index.css`.
+
+### UI validation
+
+- `citizen-frontend`: `npm run lint` passed after the UI changes.
+- `citizen-frontend`: `npm run build` passed after the UI changes.
+- Browser home route loaded successfully at `http://localhost:5173/`.
+- Browser login route loaded successfully with labeled controls and no horizontal overflow.
+
+### Remaining UI limitations
+
+- Full browser automation across every requested viewport and every authenticated flow was not completed in this pass.
+- Most page copy remains English; the shared translation system is connected, but full translation coverage for every page is still future work.
+- The frontend API service modules remain available as the integration boundary; the current UI continues to use the established local prototype context behavior.
+
+## 2026-08-22 Delivery Update
+
+The roadmap implementation is now available in the canonical `citizen-frontend` app and new `citizen-backend` service. Completed capabilities include:
+
+- Safe fixture-backed local complaint initialization with ownership, stable IDs, timestamps, and status history.
+- Accessible complaint validation, preview/confirm flow, duplicate-submit protection, details, tracking, and reusable cards/timeline.
+- Prototype citizen and official authentication, protected routes, logout, role-aware navigation, ownership filtering, and official dashboard filters/status updates.
+- English, Hindi, and Marathi translation dictionaries connected to shared language context and persisted selection.
+- Environment-based frontend API services and Express backend endpoints for auth, complaints, ownership, status updates, health checks, and deterministic AI recommendations.
+- Backend password hashing, JWT authorization, safe error responses, ignored local data/secrets, responsive dashboard styling, and setup documentation.
+
+Validation completed:
+
+- `citizen-frontend`: `npm run lint` passed.
+- `citizen-frontend`: `npm run build` passed.
+- `citizen-backend`: `npm install` completed with zero vulnerabilities.
+- Backend smoke test passed registration, login, complaint creation, ownership filtering, AI categorization, official login, and status update.
+- Editor diagnostics reported no errors.
+
+Production work still requiring deployment credentials or infrastructure is deliberately isolated: replace the development JSON adapter with MongoDB/PostgreSQL, configure a production JWT secret and CORS origin, connect a server-side AI provider, and run deployed end-to-end/responsive tests.
+
 ## Suggested Next Task
 
 The highest-value next step is to connect `mockComplaints.js` to `ComplaintContext` and then use `ComplaintCard` inside `MyComplaints.jsx`. This will make the sample data visible and exercise the reusable component and details route together.

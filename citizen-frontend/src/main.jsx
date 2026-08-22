@@ -6,15 +6,18 @@ import App from "./App.jsx";
 
 import { AuthProvider } from "./context/AuthContext";
 import { ComplaintProvider } from "./context/ComplaintContext";
+import { LanguageProvider } from "./context/LanguageContext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <ComplaintProvider>
-          <App />
-        </ComplaintProvider>
-      </AuthProvider>
-    </BrowserRouter>
+    <LanguageProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <ComplaintProvider>
+            <App />
+          </ComplaintProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </LanguageProvider>
   </StrictMode>
 );

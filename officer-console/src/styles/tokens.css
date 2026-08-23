@@ -1,0 +1,90 @@
+:root {
+  /* Surface & Background */
+  --color-bg: #F8FAFC;
+  --color-surface: #FFFFFF;
+  --color-surface-sunken: #F1F5F9;
+  --color-surface-elevated: #FFFFFF;
+  --color-border: #E2E8F0;
+  --color-border-strong: #CBD5E1;
+
+  /* Typography / Inks */
+  --color-ink: #0F172A;
+  --color-ink-muted: #475569;
+  --color-ink-faint: #94A3B8;
+  --color-ink-inverse: #FFFFFF;
+
+  /* Primary Brand (Government & Civic Authority) */
+  --color-primary: #0A365C;
+  --color-primary-hover: #072540;
+  --color-primary-tint: #E8F1F8;
+  --color-primary-light: #1A5285;
+
+  /* Civic & Grievance Status Colors */
+  --color-healthy: #059669;
+  --color-healthy-bg: #ECFDF5;
+  --color-healthy-border: #A7F3D0;
+
+  --color-critical: #DC2626;
+  --color-critical-bg: #FEF2F2;
+  --color-critical-border: #FECACA;
+
+  --color-high: #EA580C;
+  --color-high-bg: #FFF7ED;
+  --color-high-border: #FFEDD5;
+
+  --color-moderate: #D97706;
+  --color-moderate-bg: #FFFBEB;
+  --color-moderate-border: #FDE68A;
+
+  --color-low: #0284C7;
+  --color-low-bg: #F0F9FF;
+  --color-low-border: #BAE6FD;
+
+  /* AI & Machine Learning Accent */
+  --color-ai: #4F46E5;
+  --color-ai-tint: #EEF2FF;
+  --color-ai-border: #C7D2FE;
+
+  /* Water & Utility Accents */
+  --color-water: #0284C7;
+  --color-water-tint: #E0F2FE;
+
+  /* Typography */
+  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Public Sans', var(--font-ui);
+  --font-data: 'IBM Plex Mono', 'SFMono-Regular', Menlo, monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.875rem;
+  --text-md: 0.9375rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+
+  /* Layout Spacings */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+
+  --sidebar-width: 260px;
+  --sidebar-collapsed-width: 72px;
+  --topbar-height: 64px;
+
+  --radius-xs: 3px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+  --shadow-drawer: -4px 0 24px rgba(15, 23, 42, 0.15);
+}

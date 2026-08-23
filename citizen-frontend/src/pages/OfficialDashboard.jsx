@@ -3,7 +3,7 @@ import { useComplaints } from "../context/useComplaints";
 import { useAuth } from "../context/useAuth";
 import { Navigate } from "react-router-dom";
 
-const statuses = ["Submitted", "Under Review", "Assigned", "In Progress", "Resolved"];
+const statuses = ["submitted", "in_progress", "resolved", "reopened", "closed"];
 
 function OfficialDashboard() {
   const { user } = useAuth();
@@ -23,11 +23,11 @@ function OfficialDashboard() {
       </header>
       <section className="dashboard-stats" aria-label="Complaint summary">
         <strong>Total <span>{complaints.length}</span></strong>
-        {statuses.map((status) => <strong key={status}>{status} <span>{count(status)}</span></strong>)}
+        {statuses.map((status) => <strong key={status}>{status.replaceAll("_", " ")} <span>{count(status)}</span></strong>)}
       </section>
       <label htmlFor="status-filter">Filter by status</label>
       <select id="status-filter" value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
-        <option>All</option>{statuses.map((status) => <option key={status}>{status}</option>)}
+        <option>All</option>{statuses.map((status) => <option key={status} value={status}>{status.replaceAll("_", " ")}</option>)}
       </select>
       <section className="official-list">
         {visibleComplaints.length === 0 ? <p>No complaints match this filter.</p> : visibleComplaints.map((complaint) => (

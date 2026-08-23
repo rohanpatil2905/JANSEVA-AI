@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ComplaintContext } from "./useComplaints";
 import mockComplaints from "../data/mockComplaints";
+import { complaintService } from "../services/complaintService";
 
 const STORAGE_KEY = "complaints";
 
@@ -39,8 +40,32 @@ function createComplaintId(complaints) {
 
 export function ComplaintProvider({ children }) {
   const [complaints, setComplaints] = useState(readComplaints);
+  const [loading, setLoading] = useState(Boolean(localStorage.getItem("token")));
 
-  const addComplaint = (complaint) => {
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    complaintService.getComplaints(token)
+      .then(setComplaints)
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const addComplaint = async (complaint) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const savedComplaint = await complaintService.createComplaint({
+        title: complaint.title,
+        description: complaint.description,
+        category: complaint.category,
+        location: complaint.location,
+        latitude: complaint.latitude,
+        longitude: complaint.longitude,
+      }, token);
+      setComplaints((current) => [...current, savedComplaint]);
+      return savedComplaint;
+    }
+
     const timestamp = new Date().toISOString();
     const newComplaint = {
       ...complaint,
@@ -61,7 +86,14 @@ export function ComplaintProvider({ children }) {
     return complaints.filter((complaint) => complaint.userEmail === userEmail);
   };
 
-  const updateComplaintStatus = (complaintId, status) => {
+  const updateComplaintStatus = async (complaintId, status) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const updatedComplaint = await complaintService.updateComplaintStatus(complaintId, status, token);
+      setComplaints((current) => current.map((complaint) => complaint.id === complaintId ? updatedComplaint : complaint));
+      return updatedComplaint;
+    }
+
     const timestamp = new Date().toISOString();
     const updatedComplaints = complaints.map((complaint) => {
       if (complaint.id !== complaintId) return complaint;
@@ -83,6 +115,7 @@ export function ComplaintProvider({ children }) {
     <ComplaintContext.Provider
       value={{
         complaints,
+        loading,
         addComplaint,
         getUserComplaints,
         updateComplaintStatus,

@@ -1,18 +1,6 @@
 import { useState } from "react";
 import { AuthContext } from "./useAuth";
-
-const DEMO_USER = {
-  name: "Demo Citizen",
-  email: "demo@janseva.ai",
-  password: "demo123",
-  role: "citizen",
-};
-const DEMO_OFFICIAL = {
-  name: "Demo Official",
-  email: "official@janseva.ai",
-  password: "official123",
-  role: "official",
-};
+import { authService } from "../services/authService";
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
@@ -25,61 +13,32 @@ export function AuthProvider({ children }) {
     }
   });
 
-  const register = (userData) => {
-    const registeredUsers = (() => {
-      try {
-        const parsedUsers = JSON.parse(localStorage.getItem("registeredUsers") || "[]");
-        return Array.isArray(parsedUsers) ? parsedUsers : [];
-      } catch {
-        return [];
-      }
-    })();
-    if (registeredUsers.some((item) => item.email.toLowerCase() === userData.email.toLowerCase())) {
-      return { success: false, message: "An account with this email already exists." };
+  const register = async (userData) => {
+    try {
+      const result = await authService.register(userData);
+      if (result.token) localStorage.setItem("token", result.token);
+      return { success: true, user: result.user };
+    } catch (error) {
+      return { success: false, message: error.message };
     }
-    const nextUser = { ...userData, email: userData.email.toLowerCase(), role: "citizen" };
-    localStorage.setItem("registeredUsers", JSON.stringify([...registeredUsers, nextUser]));
-    localStorage.setItem("registeredUser", JSON.stringify(nextUser));
-    return { success: true };
   };
 
-  const login = (email, password) => {
-    const savedUsers = (() => {
-      try {
-        const parsedUsers = JSON.parse(localStorage.getItem("registeredUsers") || "[]");
-        return Array.isArray(parsedUsers) ? parsedUsers : [];
-      } catch {
-        return [];
-      }
-    })();
-    const legacyUser = localStorage.getItem("registeredUser");
-    let legacyUsers = [];
+  const login = async (email, password) => {
     try {
-      if (legacyUser) legacyUsers = [JSON.parse(legacyUser)];
-    } catch {
-      legacyUsers = [];
-    }
-    const users = [DEMO_USER, DEMO_OFFICIAL, ...savedUsers, ...legacyUsers];
-
-    const registeredUser = users.find(
-      (item) => item.email.toLowerCase() === email.trim().toLowerCase() && item.password === password,
-    );
-    if (registeredUser) {
-      const safeUser = { name: registeredUser.name, email: registeredUser.email, role: registeredUser.role || "citizen" };
-      setUser(safeUser);
-      localStorage.setItem("user", JSON.stringify(safeUser));
+      const result = await authService.login({ email, password });
+      localStorage.setItem("token", result.token);
+      localStorage.setItem("user", JSON.stringify(result.user));
+      setUser(result.user);
       return { success: true };
+    } catch (error) {
+      return { success: false, message: error.message };
     }
-
-    return {
-      success: false,
-      message: "Invalid email or password.",
-    };
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
   };
 
   return (

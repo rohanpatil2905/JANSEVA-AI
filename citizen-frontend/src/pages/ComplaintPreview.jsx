@@ -27,7 +27,7 @@ function ComplaintPreview() {
         );
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (submitting) return;
         setSubmitting(true);
 
@@ -43,10 +43,13 @@ function ComplaintPreview() {
             userEmail: user.email.toLowerCase(),
         };
 
-        const savedComplaint = addComplaint(newComplaint);
-
-        navigate("/my-complaints");
-        return savedComplaint;
+        try {
+            await addComplaint(newComplaint);
+            navigate("/my-complaints");
+        } catch (error) {
+            setSubmitting(false);
+            window.alert(error.message);
+        }
     };
 
     return (

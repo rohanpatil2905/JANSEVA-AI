@@ -1,4 +1,4 @@
-const statuses = ["Submitted", "Under Review", "Assigned", "In Progress", "Resolved"];
+const statuses = ["submitted", "in_progress", "resolved", "reopened", "closed"];
 
 function StatusTimeline({ status, statusHistory = [] }) {
 	const currentIndex = statuses.indexOf(status);
@@ -12,7 +12,7 @@ function StatusTimeline({ status, statusHistory = [] }) {
 					<div className={`timeline-item ${completed ? "completed" : ""} ${item === status ? "current" : ""}`} key={item}>
 						<div className="timeline-number">{index + 1}</div>
 						<div className="timeline-content">
-							<h3>{item} {item === status && <span className="current-label">Current</span>}</h3>
+							<h3>{item.replaceAll("_", " ")} {item === status && <span className="current-label">Current</span>}</h3>
 							<p>{historyByStatus.get(item) ? new Date(historyByStatus.get(item)).toLocaleString() : completed ? "Completed" : "Awaiting update"}</p>
 						</div>
 					</div>

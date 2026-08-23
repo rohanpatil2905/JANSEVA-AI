@@ -72,6 +72,8 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchDashboardData();
+    const refreshTimer = window.setInterval(() => fetchDashboardData(), 5000);
+    return () => window.clearInterval(refreshTimer);
   }, []);
 
   // Category chart colors

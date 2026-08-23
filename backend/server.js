@@ -21,7 +21,26 @@ app.use(morgan('dev'));
 // Serve uploaded complaint media (photos/videos/audio) statically
 app.use('/uploads', express.static(require('path').join(__dirname, 'uploads')));
 
-// Health check — hit this first to confirm the server is up
+// API root and health check — help discover valid routes during development
+app.get('/api', (req, res) => {
+    res.json({
+        status: 'ok',
+        message: 'JanSeva AI API',
+        routes: [
+            'GET /api/health',
+            'POST /api/auth/register',
+            'POST /api/auth/login',
+            'POST /api/complaints',
+            'GET /api/complaints',
+            'GET /api/complaints/:id',
+            'PUT /api/complaints/:id/status',
+            'GET /api/gis/hotspots',
+            'GET /api/gis/points',
+            'GET /api/gis/nearby'
+        ]
+    });
+});
+
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'JanSeva AI backend is running' });
 });
@@ -33,7 +52,12 @@ app.use('/api/gis', gisRoutes);
 
 // 404 handler
 app.use((req, res) => {
-    res.status(404).json({ error: 'Route not found' });
+    res.status(404).json({
+        error: 'Route not found',
+        method: req.method,
+        url: req.originalUrl,
+        hint: 'Use GET /api or GET /api/health to list valid API routes.'
+    });
 });
 
 // Generic error handler (catches anything thrown synchronously)

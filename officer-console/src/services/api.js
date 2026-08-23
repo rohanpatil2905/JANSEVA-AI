@@ -29,6 +29,7 @@ import {
 const STORAGE_KEY = 'janseva_ai_complaints_v1';
 const SIMULATED_LATENCY_MS = 140;
 const delay = (ms = SIMULATED_LATENCY_MS) => new Promise(resolve => setTimeout(resolve, ms));
+const unwrapComplaint = data => data?.complaint || data;
 
 // ============================================================================
 // Prototype In-Memory & SessionStorage Working State Engine
@@ -152,7 +153,7 @@ export async function getComplaintById(complaintId) {
   if (isApiMode()) {
     try {
       const data = await apiClient.get(`/complaints/${complaintId}`);
-      return normalizeComplaint(data);
+      return normalizeComplaint(unwrapComplaint(data));
     } catch (err) {
       console.warn(`[api] getComplaintById backend call failed for ${complaintId}, using prototype fallback:`, err.message);
     }

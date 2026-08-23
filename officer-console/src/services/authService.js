@@ -153,7 +153,9 @@ export function enrichOfficer(rawOfficer) {
     ...rawOfficer,
     authorityLevel: roleConfig.authorityLevel,
     authorityLevelNumber: roleConfig.levelNumber,
-    permissions: rawOfficer.permissions || roleConfig.permissions,
+    permissions: Array.isArray(rawOfficer.permissions) && rawOfficer.permissions.length > 0
+      ? rawOfficer.permissions
+      : roleConfig.permissions,
     accountStatus: 'Active & Authorized',
     lastSession: new Date().toISOString(),
   };
@@ -237,6 +239,10 @@ export function getCurrentSession() {
     if (new Date(parsed.expiresAt) < new Date()) {
       sessionStorage.removeItem(SESSION_KEY);
       return null;
+    }
+    if (parsed.user?.role === 'official' || parsed.user?.email === 'official@janseva.ai') {
+      parsed.user = enrichOfficer({ ...parsed.user, role: MUNICIPAL_ROLES.COMMISSIONER, permissions: [] });
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify(parsed));
     }
     return parsed;
   } catch (e) {

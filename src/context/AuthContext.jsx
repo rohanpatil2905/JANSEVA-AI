@@ -1,6 +1,6 @@
-import { createContext, useContext, useState } from "react";
-
-const AuthContext = createContext();
+import { useContext, useState } from "react";
+import { AuthContext } from "./useAuth";
+import { authService } from "../services/authService";
 
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(() => {
@@ -11,47 +11,28 @@ export function AuthProvider({ children }) {
             : null;
     });
 
-    const register = (userData) => {
-        localStorage.setItem(
-            "registeredUser",
-            JSON.stringify(userData)
-        );
-
-        return true;
+    const register = async (userData) => {
+        try {
+            const result = await authService.register(userData);
+            localStorage.setItem("token", result.token);
+            localStorage.setItem("user", JSON.stringify(result.user));
+            setUser(result.user);
+            return { success: true, user: result.user };
+        } catch (error) {
+            return { success: false, message: error.message };
+        }
     };
 
-    const login = (email, password) => {
-        const savedUser = localStorage.getItem("registeredUser");
-
-        if (!savedUser) {
-            return {
-                success: false,
-                message: "No registered user found.",
-            };
+    const login = async (email, password) => {
+        try {
+            const result = await authService.login({ email, password });
+            localStorage.setItem("token", result.token);
+            localStorage.setItem("user", JSON.stringify(result.user));
+            setUser(result.user);
+            return { success: true };
+        } catch (error) {
+            return { success: false, message: error.message };
         }
-
-        const registeredUser = JSON.parse(savedUser);
-
-        if (
-            registeredUser.email === email &&
-            registeredUser.password === password
-        ) {
-            setUser(registeredUser);
-
-            localStorage.setItem(
-                "user",
-                JSON.stringify(registeredUser)
-            );
-
-            return {
-                success: true,
-            };
-        }
-
-        return {
-            success: false,
-            message: "Invalid email or password.",
-        };
     };
 
     const logout = () => {

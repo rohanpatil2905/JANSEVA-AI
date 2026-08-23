@@ -23,7 +23,7 @@ function Register() {
         });
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
         setError("");
@@ -45,9 +45,11 @@ function Register() {
             return;
         }
 
-        register(formData);
-
-        alert("Registration successful!");
+        const result = await register(formData);
+        if (!result.success) {
+            setError(result.message);
+            return;
+        }
 
         navigate("/login");
     };

@@ -12,7 +12,7 @@ function Login() {
 
     const [error, setError] = useState("");
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
         setError("");
@@ -22,14 +22,12 @@ function Login() {
             return;
         }
 
-        const result = login(email, password);
+        const result = await login(email, password);
 
         if (!result.success) {
             setError(result.message);
             return;
         }
-
-        alert("Login successful!");
 
         navigate("/");
     };

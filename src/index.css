@@ -9,6 +9,178 @@ body {
   color: #222;
 }
 
+.site-nav {
+  background: #ffffff;
+  border-bottom: 1px solid #dce3eb;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.nav-inner {
+  align-items: center;
+  display: flex;
+  gap: 28px;
+  justify-content: space-between;
+  margin: 0 auto;
+  max-width: 1180px;
+  min-height: 76px;
+  padding: 0 24px;
+}
+
+.brand-mark a {
+  color: #1769aa;
+  font-size: 22px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.nav-links {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.nav-links a {
+  border-radius: 6px;
+  color: #52606d;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 9px 11px;
+  text-decoration: none;
+}
+
+.nav-links a:hover,
+.nav-links a:focus-visible {
+  background: #eef4ff;
+  color: #1769aa;
+}
+
+@media (max-width: 680px) {
+  .nav-inner {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 14px;
+    padding-top: 14px;
+  }
+
+  .nav-links {
+    justify-content: flex-start;
+    width: 100%;
+  }
+}
+
+.auth-page,
+.complaint-page,
+.preview-page,
+.my-complaints-page,
+.complaint-details {
+  margin: 0 auto;
+  max-width: 1180px;
+  padding: 64px 24px;
+}
+
+.auth-page h1,
+.complaint-page h1,
+.preview-page h1,
+.my-complaints-page h1,
+.complaint-details h1 {
+  color: #17232b;
+  font-size: clamp(34px, 5vw, 58px);
+  line-height: 1.05;
+  margin: 0 0 16px;
+}
+
+.auth-page form,
+.complaint-page form {
+  background: #ffffff;
+  border: 1px solid #dbe6e1;
+  border-radius: 10px;
+  box-shadow: 0 14px 36px rgba(23, 35, 43, .08);
+  display: grid;
+  gap: 18px;
+  max-width: 620px;
+  padding: 30px;
+}
+
+.auth-page form > div,
+.complaint-page form > div {
+  display: grid;
+  gap: 6px;
+}
+
+.auth-page label,
+.complaint-page label {
+  color: #17232b;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.auth-page input,
+.complaint-page input,
+.complaint-page select,
+.complaint-page textarea {
+  background: #ffffff;
+  border: 1px solid #b8c9c3;
+  border-radius: 7px;
+  color: #17232b;
+  font: inherit;
+  padding: 12px 13px;
+  width: 100%;
+}
+
+.complaint-page textarea {
+  min-height: 130px;
+  resize: vertical;
+}
+
+.auth-page form button,
+.complaint-page form button,
+.preview-buttons button {
+  background: #087f70;
+  border: 0;
+  border-radius: 7px;
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 13px 18px;
+}
+
+.auth-page form button:hover,
+.complaint-page form button:hover,
+.preview-buttons button:hover {
+  background: #07574f;
+}
+
+.preview-card,
+.complaint-card {
+  background: #ffffff;
+  border: 1px solid #dbe6e1;
+  border-radius: 10px;
+  box-shadow: 0 14px 36px rgba(23, 35, 43, .08);
+  padding: 30px;
+}
+
+.preview-card {
+  max-width: 760px;
+}
+
+.preview-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.preview-buttons button:first-child {
+  background: #ffffff;
+  border: 1px solid #087f70;
+  color: #07574f;
+}
+
 .home-page {
   min-height: 100vh;
 }

@@ -132,7 +132,11 @@ export function normalizeAIRecommendation(raw = {}) {
 export function normalizeOfficerSession(raw = {}) {
   if (!raw) return null;
   const rawUser = raw.user || raw.officer || raw;
-  const role = rawUser.role === 'officer' ? 'Zonal Ward Officer' : rawUser.role;
+  const role = rawUser.role === 'official' || rawUser.email === 'official@janseva.ai'
+    ? 'Senior Municipal Commissioner'
+    : rawUser.role === 'officer'
+      ? 'Zonal Ward Officer'
+      : rawUser.role;
 
   return {
     user: {

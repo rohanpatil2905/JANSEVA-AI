@@ -5,8 +5,6 @@ import { useAuth } from "../context/AuthContext";
 function ComplaintPreview() {
     const location = useLocation();
     const navigate = useNavigate();
-    const { user } = useAuth();
-
     const { addComplaint } = useComplaints();
 
     const complaint = location.state;
@@ -25,31 +23,14 @@ function ComplaintPreview() {
         );
     }
 
-    const handleSubmit = () => {
-        const complaintId =
-            "JS-" + Math.floor(1000 + Math.random() * 9000);
-
-        const newComplaint = {
-            id: complaintId,
-            title: complaint.title,
-            description: complaint.description,
-            category: complaint.category,
-            location: complaint.location,
-            image: complaint.image
-                ? complaint.image.name
-                : null,
-            status: "Submitted",
-            createdAt: new Date().toLocaleDateString(),
-            userEmail: user.email,
-        };
-
-        addComplaint(newComplaint);
-
-        alert(
-            `Complaint submitted successfully!\nComplaint ID: ${complaintId}`
-        );
-
-        navigate("/my-complaints");
+    const handleSubmit = async () => {
+        try {
+            const savedComplaint = await addComplaint(complaint);
+            alert(`Complaint submitted successfully!\nComplaint ID: ${savedComplaint.id}`);
+            navigate("/my-complaints");
+        } catch (error) {
+            alert(error.message);
+        }
     };
 
     return (

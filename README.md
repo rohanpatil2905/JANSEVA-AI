@@ -11,6 +11,19 @@ JanSeva AI is a multilingual citizen grievance prototype for reporting civic iss
 
 ## Run locally
 
+For a single-origin test deployment, build both frontends and start the unified
+server:
+
+```powershell
+npm run build
+Push-Location officer-console; npm run build; Pop-Location
+Push-Location citizen-backend; npm start; Pop-Location
+```
+
+Open `http://localhost:5000/` for the citizen portal or
+`http://localhost:5000/officer/` for the officer console. Both use the same
+API and persistence store.
+
 ```powershell
 cd citizen-frontend
 npm install

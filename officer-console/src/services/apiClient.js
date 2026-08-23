@@ -17,7 +17,7 @@ export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
   (typeof window !== 'undefined' && window.location.origin
     ? `${window.location.origin}/api`
-    : 'http://localhost:8000/api');
+    : 'http://localhost:5000/api');
 
 /**
  * Check if the application is configured to run against the real backend API
@@ -25,7 +25,7 @@ export const API_BASE_URL =
 export const isApiMode = () => {
   const dataSource = import.meta.env.VITE_DATA_SOURCE;
   const hasBaseUrl = Boolean(import.meta.env.VITE_API_BASE_URL);
-  return dataSource === 'api' && hasBaseUrl;
+  return dataSource === 'api' || hasBaseUrl;
 };
 
 /**

@@ -168,7 +168,7 @@ export async function login({ emailOrId, password, selectedRole }) {
   if (isApiMode()) {
     try {
       const responseData = await apiClient.post('/auth/login', {
-        username: emailOrId,
+        email: emailOrId,
         password: password,
       });
 

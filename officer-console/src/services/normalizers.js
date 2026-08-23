@@ -132,13 +132,14 @@ export function normalizeAIRecommendation(raw = {}) {
 export function normalizeOfficerSession(raw = {}) {
   if (!raw) return null;
   const rawUser = raw.user || raw.officer || raw;
+  const role = rawUser.role === 'officer' ? 'Zonal Ward Officer' : rawUser.role;
 
   return {
     user: {
       id: rawUser.id || rawUser.officer_id || 'OFF-DEFAULT',
       name: rawUser.name || rawUser.officer_name || 'Municipal Officer',
       email: rawUser.email || 'officer@gov.in',
-      role: rawUser.role || rawUser.designation || 'Zonal Ward Officer',
+      role: role || rawUser.designation || 'Zonal Ward Officer',
       department: rawUser.department || 'Municipal Administration',
       ward: rawUser.ward || rawUser.jurisdiction || 'Ward 12',
       phone: rawUser.phone || rawUser.contact || '+91 98000-00000',

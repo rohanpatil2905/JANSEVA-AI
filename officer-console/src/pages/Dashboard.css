@@ -1,0 +1,57 @@
+/* ============================================================================
+   JanSeva AI — Dashboard Operational Layout Styles
+   ============================================================================ */
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* 5 KPI Cards in a balanced single row on Desktop */
+.dashboard__kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+/* 68% : 32% Operational Grids */
+.dashboard__main-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2.15fr) minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.dashboard__secondary-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2.15fr) minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+/* Responsive Media Queries */
+@media (max-width: 1200px) {
+  .dashboard__kpi-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1024px) {
+  .dashboard__main-grid,
+  .dashboard__secondary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard__kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 500px) {
+  .dashboard__kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}

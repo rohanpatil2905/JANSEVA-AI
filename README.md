@@ -6,6 +6,8 @@ JanSeva AI is a multilingual citizen grievance prototype for reporting civic iss
 
 - `citizen-frontend`: React/Vite citizen and official web application.
 - `citizen-backend`: Express API with JWT authentication, complaint ownership, status history, and a development JSON persistence adapter.
+- `backend`: PostgreSQL-backed JanSeva API used by the collaborator repository.
+- `officer-console`: React/Vite municipal officer application.
 
 ## Run locally
 
@@ -23,6 +25,8 @@ npm install
 copy .env.example .env
 npm start
 ```
+
+For the PostgreSQL-backed API and officer console, use `backend` and `officer-console` respectively. Their package lockfiles are committed with the combined repository.
 
 The frontend defaults to `http://localhost:5000/api`; override it with `VITE_API_BASE_URL`. No secrets belong in source control.
 

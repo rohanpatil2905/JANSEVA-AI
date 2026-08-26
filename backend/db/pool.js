@@ -4,17 +4,27 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/janseva';
+const connectionString =
+    process.env.DATABASE_URL ||
+    'postgresql://postgres:postgres@localhost:5432/janseva';
 
-if (!connectionString) {
-    console.error('Missing DATABASE_URL. Copy .env.example to .env and set DATABASE_URL=postgresql://janseva:janseva@localhost:5432/janseva');
-}
+const isRender =
+    process.env.RENDER === 'true' ||
+    connectionString.includes('render.com');
 
 const pool = new Pool({
     connectionString,
     max: 10,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 5000,
+
+    // Render PostgreSQL requires SSL/TLS.
+    // Local PostgreSQL continues to work without SSL.
+    ssl: isRender
+        ? {
+            rejectUnauthorized: false,
+        }
+        : false,
 });
 
 pool.on('error', (err) => {

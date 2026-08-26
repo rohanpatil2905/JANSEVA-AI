@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: janseva-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: janseva
+      POSTGRES_USER: janseva
+      POSTGRES_PASSWORD: janseva
+    ports:
+      - "5432:5432"
+    volumes:
+      - janseva_pgdata:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./db/schema_phase2.sql:/docker-entrypoint-initdb.d/02-schema_phase2.sql:ro
+      - ./db/schema_phase3_gis.sql:/docker-entrypoint-initdb.d/03-schema_phase3_gis.sql:ro
+      - ./db/schema_ai_processing.sql:/docker-entrypoint-initdb.d/04-schema_ai_processing.sql:ro
+      - ./db/schema_phase4_security.sql:/docker-entrypoint-initdb.d/05-schema_phase4_security.sql:ro
+
+volumes:
+  janseva_pgdata:

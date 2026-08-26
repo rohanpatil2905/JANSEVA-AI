@@ -6,6 +6,18 @@
 
 const pool = require('../db/pool');
 
+async function ensureLocationColumns() {
+    await pool.query(`
+        ALTER TABLE complaints
+          ADD COLUMN IF NOT EXISTS location_address TEXT;
+    `);
+}
+
+function severityRank(level) {
+    const order = { LOW: 1, MEDIUM: 2, HIGH: 3, CRITICAL: 4 };
+    return order[String(level || 'LOW').toUpperCase()] || 1;
+}
+
 // Shared WHERE-clause builder so all three endpoints support the same filters.
 function buildFilters({ status, department_id, category_id, from, to }, startIndex = 1) {
     const conditions = ['latitude IS NOT NULL', 'longitude IS NOT NULL'];
@@ -252,4 +264,206 @@ async function getNearby(req, res) {
     }
 }
 
-module.exports = { getHotspots, getHeatmapPoints, getNearby };
+async function getComplaintMap(req, res) {
+    try {
+        await ensureLocationColumns();
+        const result = await pool.query(`
+            SELECT
+                c.id AS complaint_id,
+                c.latitude,
+                c.longitude,
+                c.location_address,
+                COALESCE(cat.name, ap.predicted_category, 'General Civic Issue') AS category,
+                COALESCE(ss.level, 'LOW') AS severity,
+                c.status,
+                dcm.cluster_id AS master_issue_id,
+                dc.affected_count,
+                COALESCE(c.location_address, rr.ward, 'Ward location') AS location,
+                dc.location AS master_issue_location
+            FROM complaints c
+            LEFT JOIN categories cat ON cat.id = c.category_id
+            LEFT JOIN LATERAL (
+                SELECT predicted_category FROM ai_predictions
+                WHERE complaint_id = c.id ORDER BY created_at DESC LIMIT 1
+            ) ap ON true
+            LEFT JOIN LATERAL (
+                SELECT level FROM severity_scores
+                WHERE complaint_id = c.id ORDER BY created_at DESC LIMIT 1
+            ) ss ON true
+            LEFT JOIN duplicate_cluster_members dcm ON dcm.complaint_id = c.id
+            LEFT JOIN duplicate_clusters dc ON dc.id = dcm.cluster_id
+            LEFT JOIN LATERAL (
+                SELECT ward FROM routing_results
+                WHERE complaint_id = c.id ORDER BY created_at DESC LIMIT 1
+            ) rr ON true
+            WHERE c.latitude IS NOT NULL AND c.longitude IS NOT NULL
+            ORDER BY c.created_at DESC
+        `);
+
+        return res.json({
+            complaint_count: result.rows.length,
+            complaints: result.rows.map((row) => ({
+                complaint_id: row.complaint_id,
+                latitude: row.latitude,
+                longitude: row.longitude,
+                category: row.category,
+                severity: row.severity,
+                status: row.status,
+                master_issue_id: row.master_issue_id || null,
+                affected_count: row.affected_count || 1,
+                location: row.location || row.location_address || null,
+                master_issue_location: row.master_issue_location || null,
+            })),
+        });
+    } catch (err) {
+        console.error('getComplaintMap error:', err);
+        return res.status(500).json({ error: 'Something went wrong while fetching the complaint map' });
+    }
+}
+
+async function getComplaintHotspots(req, res) {
+    try {
+        await ensureLocationColumns();
+        const result = await pool.query(`
+            SELECT
+                c.id AS complaint_id,
+                c.latitude,
+                c.longitude,
+                c.location_address,
+                COALESCE(cat.name, ap.predicted_category, 'General Civic Issue') AS category,
+                COALESCE(ss.level, 'LOW') AS severity,
+                COALESCE(dc.affected_count, 1) AS affected_count,
+                dcm.cluster_id AS master_issue_id,
+                COALESCE(c.location_address, rr.ward, CONCAT(ROUND(c.latitude::numeric, 3), ', ', ROUND(c.longitude::numeric, 3))) AS location,
+                dc.location AS master_issue_location
+            FROM complaints c
+            LEFT JOIN categories cat ON cat.id = c.category_id
+            LEFT JOIN LATERAL (
+                SELECT predicted_category FROM ai_predictions
+                WHERE complaint_id = c.id ORDER BY created_at DESC LIMIT 1
+            ) ap ON true
+            LEFT JOIN LATERAL (
+                SELECT level FROM severity_scores
+                WHERE complaint_id = c.id ORDER BY created_at DESC LIMIT 1
+            ) ss ON true
+            LEFT JOIN duplicate_cluster_members dcm ON dcm.complaint_id = c.id
+            LEFT JOIN duplicate_clusters dc ON dc.id = dcm.cluster_id
+            LEFT JOIN LATERAL (
+                SELECT ward FROM routing_results
+                WHERE complaint_id = c.id ORDER BY created_at DESC LIMIT 1
+            ) rr ON true
+            WHERE c.latitude IS NOT NULL AND c.longitude IS NOT NULL
+        `);
+
+        const buckets = new Map();
+        for (const row of result.rows) {
+            const latKey = Number(row.latitude).toFixed(3);
+            const lngKey = Number(row.longitude).toFixed(3);
+            const key = `${latKey},${lngKey}`;
+            if (!buckets.has(key)) {
+                buckets.set(key, {
+                    location: row.location || `${latKey}, ${lngKey}`,
+                    complaint_count: 0,
+                    affected_count: 0,
+                    categories: {},
+                    highest_severity: 'LOW',
+                    highest_severity_rank: 1,
+                });
+            }
+            const bucket = buckets.get(key);
+            bucket.complaint_count += 1;
+            bucket.affected_count += Number(row.affected_count || 1);
+            bucket.categories[row.category] = (bucket.categories[row.category] || 0) + 1;
+            const currentRank = severityRank(row.severity);
+            if (currentRank > bucket.highest_severity_rank) {
+                bucket.highest_severity_rank = currentRank;
+                bucket.highest_severity = row.severity || 'LOW';
+            }
+        }
+
+        const hotspots = [...buckets.values()].map((bucket) => {
+            const dominantCategory = Object.entries(bucket.categories).sort((a, b) => b[1] - a[1])[0]?.[0] || 'General Civic Issue';
+            return {
+                location: bucket.location,
+                complaint_count: bucket.complaint_count,
+                affected_count: bucket.affected_count,
+                dominant_category: dominantCategory,
+                highest_severity: bucket.highest_severity,
+                master_issue_location: bucket.location,
+            };
+        }).sort((a, b) => b.complaint_count - a.complaint_count || b.affected_count - a.affected_count);
+
+        return res.json({ hotspot_count: hotspots.length, hotspots });
+    } catch (err) {
+        console.error('getComplaintHotspots error:', err);
+        return res.status(500).json({ error: 'Something went wrong while aggregating complaint hotspots' });
+    }
+}
+
+async function getComplaintLocation(req, res) {
+    try {
+        await ensureLocationColumns();
+        const { id } = req.params;
+        const result = await pool.query(`
+            SELECT
+                c.id AS complaint_id,
+                c.title,
+                c.status,
+                c.latitude,
+                c.longitude,
+                c.location_address,
+                COALESCE(cat.name, ap.predicted_category, 'General Civic Issue') AS category,
+                COALESCE(ss.level, 'LOW') AS severity,
+                dc.id AS master_issue_id,
+                dc.affected_count,
+                rr.ward,
+                rr.subdivision,
+                COALESCE(c.location_address, rr.ward, CONCAT(c.latitude, ', ', c.longitude)) AS location,
+                dc.location AS master_issue_location
+            FROM complaints c
+            LEFT JOIN categories cat ON cat.id = c.category_id
+            LEFT JOIN LATERAL (
+                SELECT predicted_category FROM ai_predictions
+                WHERE complaint_id = c.id ORDER BY created_at DESC LIMIT 1
+            ) ap ON true
+            LEFT JOIN LATERAL (
+                SELECT level FROM severity_scores
+                WHERE complaint_id = c.id ORDER BY created_at DESC LIMIT 1
+            ) ss ON true
+            LEFT JOIN duplicate_cluster_members dcm ON dcm.complaint_id = c.id
+            LEFT JOIN duplicate_clusters dc ON dc.id = dcm.cluster_id
+            LEFT JOIN LATERAL (
+                SELECT ward, subdivision FROM routing_results
+                WHERE complaint_id = c.id ORDER BY created_at DESC LIMIT 1
+            ) rr ON true
+            WHERE c.id = $1
+            LIMIT 1`, [id]);
+
+        if (!result.rows.length) {
+            return res.status(404).json({ error: 'Complaint not found' });
+        }
+
+        const row = result.rows[0];
+        return res.json({
+            complaint_id: row.complaint_id,
+            title: row.title,
+            status: row.status,
+            latitude: row.latitude,
+            longitude: row.longitude,
+            address: row.location_address || null,
+            location: row.location || row.location_address || null,
+            ward: row.ward || null,
+            subdivision: row.subdivision || null,
+            category: row.category,
+            severity: row.severity,
+            master_issue_id: row.master_issue_id || null,
+            master_issue_location: row.master_issue_location || null,
+            affected_count: row.affected_count || 1,
+        });
+    } catch (err) {
+        console.error('getComplaintLocation error:', err);
+        return res.status(500).json({ error: 'Something went wrong while fetching complaint location' });
+    }
+}
+
+module.exports = { getHotspots, getHeatmapPoints, getNearby, getComplaintMap, getComplaintHotspots, getComplaintLocation };

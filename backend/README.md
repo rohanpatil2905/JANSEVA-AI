@@ -11,11 +11,32 @@ npm install
 
 ## 2. Set up PostgreSQL
 
-After the base and Phase 2/3 schemas, run `db/schema_phase4_security.sql` to add tracking codes, duplicate-cluster integrity, and supporting indexes.
+Use a real PostgreSQL instance; do not replace it with SQLite or JSON storage.
 
+### Option A: local Docker PostgreSQL (recommended)
 
-Create a database (locally, or a free hosted one like Supabase/Neon/Railway if
-your laptop doesn't have Postgres installed):
+```bash
+cp .env.example .env
+npm run db:up
+```
+
+This starts PostgreSQL on `localhost:5432` with:
+
+- database: `janseva`
+- username: `janseva`
+- password: `janseva`
+
+The container also runs the canonical schema files automatically on first start:
+
+- `db/schema.sql`
+- `db/schema_phase2.sql`
+- `db/schema_phase3_gis.sql`
+- `db/schema_ai_processing.sql`
+- `db/schema_phase4_security.sql`
+
+### Option B: local installed PostgreSQL
+
+Create a database:
 
 ```bash
 createdb janseva
@@ -24,12 +45,14 @@ createdb janseva
 Then run the schema file against it:
 
 ```bash
-psql janseva < db/schema.sql
+psql postgresql://janseva:janseva@localhost:5432/janseva < db/schema.sql
+psql postgresql://janseva:janseva@localhost:5432/janseva < db/schema_phase2.sql
+psql postgresql://janseva:janseva@localhost:5432/janseva < db/schema_phase3_gis.sql
+psql postgresql://janseva:janseva@localhost:5432/janseva < db/schema_ai_processing.sql
+psql postgresql://janseva:janseva@localhost:5432/janseva < db/schema_phase4_security.sql
 ```
 
-This creates all 6 tables (`users`, `departments`, `categories`, `officers`,
-`complaints`, `complaint_media`) and seeds a few departments/categories so you
-have something to test against immediately.
+This creates the canonical complaint + AI tables and seeds a few departments/categories so you have something to test against immediately.
 
 ## 3. Configure environment variables
 
@@ -111,13 +134,66 @@ schema_phase2.sql) and `/api/gis/*`:
 All three tested live against a real Postgres instance with clustered seed
 data (verified hotspot merging, severity aggregation, and every filter).
 
-## AI Service (Phase 2 — now built, see `ai-service/`)
+## AI Service (FastAPI)
 
-The FastAPI microservice referenced below as "not started" now exists as a
-sibling directory (`ai-service/`): classification, severity scoring,
-authenticity/spam checking, and duplicate detection, all tested (17 tests +
-live HTTP checks). See `ai-service/README.md` for setup and how it wires
-into these endpoints via `ai-service/app/client.py`.
+A Python FastAPI service exists in `ai-service/` and exposes AI endpoints for
+classification, summary generation, severity analysis, duplicate detection, and
+routing recommendations. The Node backend uses it when configured; otherwise it
+falls back to the deterministic in-process engine so complaint intake remains
+robust.
+
+Canonical backend AI API routes:
+
+- GET `/api/ai/health`
+- POST `/api/ai/analyze` with a complaint payload and JWT
+
+The Python service itself exposes:
+
+- GET `/health`
+- POST `/classify`
+- POST `/summary`
+- POST `/severity`
+- POST `/duplicates`
+- POST `/route`
+- POST `/analyze`
+
+These are modular and can be tested independently. The provider is configured
+through environment variables, not by hardcoding a single vendor.
+
+Run it locally:
+
+```bash
+cd ai-service
+python -m venv .venv
+. .venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+Set your environment variables for the provider:
+
+```env
+AI_PROVIDER=openai_compatible
+AI_MODEL=gpt-4o-mini
+AI_BASE_URL=https://api.openai.com/v1
+AI_API_KEY=your_provider_key
+AI_SERVICE_API_KEY=replace_with_a_long_random_service_key
+AI_SERVICE_URL=http://localhost:8000
+```
+
+If `AI_PROVIDER` is set to `mock`, or if no real provider key is configured,
+the service returns mock structured output marked as non-production and the
+Node backend continues to use the fallback engine safely.
+
+## Database changes
+
+The canonical PostgreSQL backend includes the standard complaint schema plus the
+AI-related pipeline tables. The new processing tracking table lives in
+`db/schema_ai_processing.sql` and records job state (`PENDING`, `PROCESSING`,
+`COMPLETED`, `FAILED`, `REVIEW_REQUIRED`) for complaint AI work.
+
+This keeps AI work observable and auditable even when the AI service is slow or
+temporarily unavailable.
 
 ## File uploads (Phase 3.5)
 

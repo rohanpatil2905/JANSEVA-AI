@@ -60,9 +60,29 @@ CREATE TABLE IF NOT EXISTS complaints (
                         CHECK (status IN ('submitted', 'in_progress', 'resolved', 'reopened', 'closed')),
     latitude            DOUBLE PRECISION,
     longitude           DOUBLE PRECISION,
+    location_address    TEXT,
+    language            VARCHAR(20) NOT NULL DEFAULT 'en',
+    original_language   VARCHAR(20) NOT NULL DEFAULT 'en',
+    original_text       TEXT,
+    transcript_text     TEXT,
+    translated_text     TEXT,
+    audio_reference     TEXT,
+    citizen_language    VARCHAR(20) DEFAULT 'en',
+    response_translation TEXT,
     created_at          TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at          TIMESTAMP NOT NULL DEFAULT NOW()
 );
+
+ALTER TABLE complaints
+    ADD COLUMN IF NOT EXISTS location_address TEXT,
+    ADD COLUMN IF NOT EXISTS language VARCHAR(20) NOT NULL DEFAULT 'en',
+    ADD COLUMN IF NOT EXISTS original_language VARCHAR(20) NOT NULL DEFAULT 'en',
+    ADD COLUMN IF NOT EXISTS original_text TEXT,
+    ADD COLUMN IF NOT EXISTS transcript_text TEXT,
+    ADD COLUMN IF NOT EXISTS translated_text TEXT,
+    ADD COLUMN IF NOT EXISTS audio_reference TEXT,
+    ADD COLUMN IF NOT EXISTS citizen_language VARCHAR(20) DEFAULT 'en',
+    ADD COLUMN IF NOT EXISTS response_translation TEXT;
 
 -- ============================================================
 -- COMPLAINT_MEDIA  (photos/videos attached to a complaint)

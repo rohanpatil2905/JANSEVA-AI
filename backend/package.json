@@ -5,6 +5,14 @@
   "main": "index.js",
   "scripts": {
   "start": "node server.js",
+  "db:up": "docker compose up -d postgres",
+  "db:down": "docker compose down",
+  "db:init": "powershell -ExecutionPolicy Bypass -File ./scripts/setup-local-postgres.ps1",
+  "validate:duplicates": "node scripts/validate-semantic-duplicates.js",
+  "validate:master-issues": "node scripts/validate-master-issue-clustering.js",
+  "validate:severity": "node scripts/validate-dynamic-severity.js",
+  "validate:routing": "node scripts/validate-routing.js",
+  "validate:sla": "node scripts/validate-sla-escalation.js",
   "test": "echo \"Error: no test specified\" && exit 1"
 },
   "keywords": [],

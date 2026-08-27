@@ -1,20 +1,13 @@
 const express = require('express');
-
 const router = express.Router();
 
-const {
-    requireAuth,
-    requireRole
-} = require('../middleware/auth');
-
+const { requireAuth, requireRole } = require('../middleware/auth');
 const {
     getComplaintForRequest,
     requireComplaintAccess
 } = require('../middleware/complaintAccess');
 
-const {
-    upload
-} = require('../middleware/upload');
+const { upload } = require('../middleware/upload');
 
 const {
     createComplaint,
@@ -23,7 +16,6 @@ const {
     listComplaints,
     getComplaint,
     updateStatus,
-    assignComplaint,
     addMedia,
     uploadMedia,
     confirmResolution
@@ -40,21 +32,31 @@ const {
     getComplaintLocation
 } = require('../controllers/gisController');
 
+const pool = require('../db/pool');
+const { logAudit } = require('../db/auditLog');
 
-/*
- * All complaint routes require authentication.
- */
+
+// ============================================================
+// AUTHENTICATION
+// ============================================================
+
 router.use(requireAuth);
 
 
-/*
- * Citizen complaint creation.
- */
+// ============================================================
+// CREATE COMPLAINT
+// ============================================================
+
 router.post(
     '/',
     requireRole('citizen'),
     createComplaint
 );
+
+
+// ============================================================
+// VOICE COMPLAINT
+// ============================================================
 
 router.post(
     '/voice',
@@ -63,9 +65,10 @@ router.post(
 );
 
 
-/*
- * Officer response translation.
- */
+// ============================================================
+// AI / OFFICER RESPONSE TRANSLATION
+// ============================================================
+
 router.post(
     '/:id/translate-response',
     requireRole('officer', 'admin'),
@@ -75,18 +78,20 @@ router.post(
 );
 
 
-/*
- * Complaint listing.
- */
+// ============================================================
+// LIST COMPLAINTS
+// ============================================================
+
 router.get(
     '/',
     listComplaints
 );
 
 
-/*
- * GIS endpoints.
- */
+// ============================================================
+// GIS
+// ============================================================
+
 router.get(
     '/map',
     getComplaintMap
@@ -98,9 +103,10 @@ router.get(
 );
 
 
-/*
- * Pipeline/master issue endpoints.
- */
+// ============================================================
+// MASTER ISSUES
+// ============================================================
+
 router.get(
     '/master-issues',
     listMasterIssues
@@ -113,9 +119,10 @@ router.get(
 );
 
 
-/*
- * Individual complaint location.
- */
+// ============================================================
+// COMPLAINT LOCATION
+// ============================================================
+
 router.get(
     '/:id/location',
     getComplaintForRequest,
@@ -124,20 +131,10 @@ router.get(
 );
 
 
-/*
- * Individual complaint.
- */
-router.get(
-    '/:id',
-    getComplaintForRequest,
-    requireComplaintAccess,
-    getComplaint
-);
+// ============================================================
+// UPDATE COMPLAINT STATUS
+// ============================================================
 
-
-/*
- * Update complaint status.
- */
 router.put(
     '/:id/status',
     requireRole('officer', 'admin'),
@@ -147,35 +144,184 @@ router.put(
 );
 
 
-/*
- * ASSIGN COMPLAINT
- *
- * POST
- * /api/complaints/:id/assign
- *
- * This was the missing endpoint that caused:
- *
- * POST .../assign
- * 404 Route not found
- */
+// ============================================================
+// RESOLUTION
+// POST /api/complaints/:id/resolve
+// ============================================================
+
 router.post(
-    '/:id/assign',
+    '/:id/resolve',
     requireRole('officer', 'admin'),
     getComplaintForRequest,
     requireComplaintAccess,
-    assignComplaint
+    async (req, res) => {
+        try {
+            const {
+                resolution_scope,
+                resolution_summary,
+                resolutionSummary,
+                summary,
+
+                technical_actions,
+                technicalActions,
+
+                rectified_area_coverage,
+                rectifiedAreaCoverage,
+
+                statutory_confirmation,
+                statutoryConfirmation
+            } = req.body || {};
+
+
+            // ------------------------------------------------
+            // Accept multiple frontend field-name variations
+            // ------------------------------------------------
+
+            const finalResolutionSummary =
+                resolution_summary ||
+                resolutionSummary ||
+                summary;
+
+            const finalTechnicalActions =
+                technical_actions ||
+                technicalActions;
+
+            const finalRectifiedAreaCoverage =
+                rectified_area_coverage ||
+                rectifiedAreaCoverage;
+
+            const finalStatutoryConfirmation =
+                statutory_confirmation ||
+                statutoryConfirmation;
+
+
+            // ------------------------------------------------
+            // VALIDATION
+            // ------------------------------------------------
+
+            if (!finalResolutionSummary) {
+                return res.status(400).json({
+                    error: 'Resolution summary is required'
+                });
+            }
+
+            if (!finalTechnicalActions) {
+                return res.status(400).json({
+                    error: 'Technical actions are required'
+                });
+            }
+
+            if (!finalStatutoryConfirmation) {
+                return res.status(400).json({
+                    error: 'Statutory officer confirmation is required'
+                });
+            }
+
+            if (req.complaint.status !== 'in_progress') {
+                return res.status(400).json({
+                    error:
+                        `Complaint must be in_progress before resolution. ` +
+                        `Current status: ${req.complaint.status}`
+                });
+            }
+
+
+            // ------------------------------------------------
+            // MARK COMPLAINT AS RESOLVED
+            // ------------------------------------------------
+
+            const result = await pool.query(
+                `
+                UPDATE complaints
+                SET
+                    status = 'resolved',
+                    updated_at = NOW()
+                WHERE id = $1
+                RETURNING *
+                `,
+                [req.complaint.id]
+            );
+
+
+            // ------------------------------------------------
+            // AUDIT LOG
+            // ------------------------------------------------
+
+            await logAudit(
+                req.complaint.id,
+                req.user.id,
+                'RESOLUTION_SUBMITTED',
+                {
+                    resolution_scope:
+                        resolution_scope || null,
+
+                    resolution_summary:
+                        finalResolutionSummary,
+
+                    technical_actions:
+                        finalTechnicalActions,
+
+                    rectified_area_coverage:
+                        finalRectifiedAreaCoverage || null,
+
+                    statutory_confirmation:
+                        true
+                }
+            );
+
+
+            // ------------------------------------------------
+            // SUCCESS
+            // ------------------------------------------------
+
+            return res.json({
+                success: true,
+                message: 'Resolution recorded successfully',
+                complaint: result.rows[0]
+            });
+
+        } catch (err) {
+            console.error(
+                'resolve complaint error:',
+                err
+            );
+
+            return res.status(500).json({
+                error:
+                    'Something went wrong while recording resolution'
+            });
+        }
+    }
 );
 
 
-/*
- * Complaint media.
- */
+// ============================================================
+// GET SINGLE COMPLAINT
+// ============================================================
+
+router.get(
+    '/:id',
+    getComplaintForRequest,
+    requireComplaintAccess,
+    getComplaint
+);
+
+
+// ============================================================
+// MEDIA - JSON URL
+// ============================================================
+
 router.post(
     '/:id/media',
     getComplaintForRequest,
     requireComplaintAccess,
     addMedia
 );
+
+
+// ============================================================
+// MEDIA - FILE UPLOAD
+// ============================================================
 
 router.post(
     '/:id/media/upload',
@@ -196,84 +342,10 @@ router.post(
 );
 
 
-/*
- * Citizen confirms/rejects resolution.
- */
-router.post(
-    '/:id/resolve',
-    requireRole('officer', 'admin'),
-    getComplaintForRequest,
-    requireComplaintAccess,
-    async (req, res) => {
-        try {
-            const {
-                resolution_scope,
-                resolution_summary,
-                technical_actions,
-                rectified_area_coverage,
-                statutory_confirmation
-            } = req.body;
+// ============================================================
+// CITIZEN CONFIRM RESOLUTION
+// ============================================================
 
-            if (!resolution_summary) {
-                return res.status(400).json({
-                    error: 'Resolution summary is required'
-                });
-            }
-
-            if (!technical_actions) {
-                return res.status(400).json({
-                    error: 'Technical actions are required'
-                });
-            }
-
-            if (req.complaint.status !== 'in_progress') {
-                return res.status(400).json({
-                    error: `Complaint must be in_progress before resolution. Current status: ${req.complaint.status}`
-                });
-            }
-
-            if (!statutory_confirmation) {
-                return res.status(400).json({
-                    error: 'Statutory officer confirmation is required'
-                });
-            }
-
-            const result = await pool.query(
-                `UPDATE complaints
-                 SET status = 'resolved',
-                     updated_at = NOW()
-                 WHERE id = $1
-                 RETURNING *`,
-                [req.complaint.id]
-            );
-
-            await logAudit(
-                req.complaint.id,
-                req.user.id,
-                'RESOLUTION_SUBMITTED',
-                {
-                    resolution_scope: resolution_scope || null,
-                    resolution_summary,
-                    technical_actions,
-                    rectified_area_coverage: rectified_area_coverage || null,
-                    statutory_confirmation: true
-                }
-            );
-
-            return res.json({
-                success: true,
-                message: 'Resolution recorded successfully',
-                complaint: result.rows[0]
-            });
-
-        } catch (err) {
-            console.error('resolve complaint error:', err);
-            return res.status(500).json({
-                error: 'Something went wrong while recording resolution'
-            });
-        }
-    }
-);
 router.post(
     '/:id/confirm-resolution',
     requireRole('citizen'),

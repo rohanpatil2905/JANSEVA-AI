@@ -6,14 +6,43 @@ import StatusTimeline from "../components/StatusTimeline";
 function TrackComplaint() {
     const { id } = useParams();
     const { user } = useAuth();
+    const { complaints, loading } = useComplaints();
 
-    const { complaints } = useComplaints();
+    const complaint = complaints.find((item) => {
+        if (String(item.id) !== String(id)) {
+            return false;
+        }
 
-    const complaint = complaints.find(
-        (item) =>
-            item.id === id &&
-            item.userEmail === user.email
-    );
+        // Backend API complaints use citizen_id
+        if (item.citizen_id && user?.id) {
+            return String(item.citizen_id) === String(user.id);
+        }
+
+        // Backward compatibility with old frontend/local complaints
+        if (item.userId && user?.id) {
+            return String(item.userId) === String(user.id);
+        }
+
+        if (item.userEmail && user?.email) {
+            return (
+                String(item.userEmail).toLowerCase() ===
+                String(user.email).toLowerCase()
+            );
+        }
+
+        return false;
+    });
+
+    if (loading) {
+        return (
+            <div className="track-page">
+                <h1>Loading Complaint...</h1>
+                <p>
+                    Please wait while we load your complaint.
+                </p>
+            </div>
+        );
+    }
 
     if (!complaint) {
         return (
@@ -46,6 +75,13 @@ function TrackComplaint() {
                     {complaint.id}
                 </p>
 
+                {complaint.tracking_code && (
+                    <p>
+                        <strong>Tracking Code:</strong>{" "}
+                        {complaint.tracking_code}
+                    </p>
+                )}
+
                 <p>
                     <strong>Category:</strong>{" "}
                     {complaint.category}
@@ -61,17 +97,24 @@ function TrackComplaint() {
                     {complaint.status}
                 </p>
 
-                {complaint.updatedAt && <p><strong>Last updated:</strong>{" "}{complaint.updatedAt}</p>}
+                {complaint.updatedAt && (
+                    <p>
+                        <strong>Last updated:</strong>{" "}
+                        {complaint.updatedAt}
+                    </p>
+                )}
 
             </div>
 
-
             <h2>Complaint Status</h2>
-            <StatusTimeline status={complaint.status} statusHistory={complaint.statusHistory || []} />
 
+            <StatusTimeline
+                status={complaint.status}
+                statusHistory={complaint.statusHistory || []}
+            />
 
             <Link
-                to={`/complaint/${complaint.id}`}
+                to={`/complaint/${encodeURIComponent(complaint.id)}`}
                 className="details-link"
             >
                 View Complaint Details

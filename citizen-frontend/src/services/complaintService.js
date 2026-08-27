@@ -18,9 +18,10 @@ export const complaintService = {
     title: data.title,
     description: data.description,
     category: data.category,
+    location: data.location,
     category_id: data.categoryId || null,
     latitude: data.latitude ?? null,
     longitude: data.longitude ?? null,
   }) })).complaint),
-  updateComplaintStatus: async (id, status, token) => normalizeComplaint((await request(`/complaints/${encodeURIComponent(id)}/status`, { method: "PUT", headers: authHeaders(token), body: JSON.stringify({ status }) })).complaint),
+  updateComplaintStatus: async (id, status, token) => normalizeComplaint((await request(`/complaints/${encodeURIComponent(id)}/status`, { method: "PATCH", headers: authHeaders(token), body: JSON.stringify({ status }) })).complaint),
 };

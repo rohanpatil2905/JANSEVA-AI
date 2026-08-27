@@ -67,13 +67,27 @@ let workingComplaints = loadWorkingState();
 
 /**
  * Fetch Macro Operational Dashboard KPI Statistics
- * Endpoint: GET /dashboard/kpis
+ * Endpoint: GET /analytics/officer-analytics
  */
 export async function getDashboardStats() {
   if (isApiMode()) {
     try {
-      const data = await apiClient.get('/dashboard/kpis');
-      return data;
+      const data = await apiClient.get('/analytics/officer-analytics');
+      return {
+        totalComplaints: data.total_complaints ?? 0,
+        openComplaints: data.pending_complaints ?? 0,
+        criticalComplaints: data.critical_high_complaints ?? 0,
+        criticalRequiringReview: 0,
+        slaAtRisk: data.sla_breached ?? 0,
+        slaBreached: data.sla_breached ?? 0,
+        slaDueWithin4Hours: 0,
+        resolvedToday: data.resolved_today ?? 0,
+        todayNewSubmissions: data.today_new_submissions ?? 0,
+        categoryBreakdown: (data.category_counts || []).map(item => ({
+          category: item.category || 'Uncategorized',
+          count: Number(item.complaint_count) || 0,
+        })),
+      };
     } catch (err) {
       console.warn('[api] getDashboardStats backend call failed, using prototype fallback:', err.message);
     }
@@ -401,13 +415,16 @@ export async function reassignComplaint(complaintId, payload) {
 export async function updateComplaintStatus(complaintId, { status, reason, officerName, officerRole }) {
   if (isApiMode()) {
     try {
-      const data = await apiClient.patch(`/complaints/${complaintId}/status`, {
-        status,
-        reason,
-        officer_name: officerName,
-        officer_role: officerRole,
-      });
-      return normalizeComplaint(data);
+      const backendStatus = {
+        Submitted: 'submitted',
+        'Under Review': 'in_progress',
+        Assigned: 'in_progress',
+        'In Progress': 'in_progress',
+        Resolved: 'resolved',
+        Closed: 'closed',
+      }[status] || status;
+      const data = await apiClient.put(`/complaints/${complaintId}/status`, { status: backendStatus });
+      return normalizeComplaint(unwrapComplaint(data));
     } catch (err) {
       console.warn(`[api] updateComplaintStatus backend call failed for ${complaintId}, using prototype fallback:`, err.message);
     }

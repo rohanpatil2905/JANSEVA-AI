@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   FileText,
@@ -25,13 +25,11 @@ import HotspotOverview from '../components/dashboard/HotspotOverview';
 import Skeleton from '../components/ui/Skeleton';
 import EmptyState from '../components/ui/EmptyState';
 import { getDashboardStats, getComplaints, getHotspots } from '../services/api';
-import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import './Dashboard.css';
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const { showSuccess, showError } = useToast();
 
   const [stats, setStats] = useState(null);
@@ -41,7 +39,7 @@ export default function Dashboard() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchDashboardData = async (isManual = false) => {
+  const fetchDashboardData = useCallback(async (isManual = false) => {
     if (isManual) setIsRefreshing(true);
     else setLoading(true);
     setError(null);
@@ -68,13 +66,15 @@ export default function Dashboard() {
       setLoading(false);
       setIsRefreshing(false);
     }
-  };
+  }, [showError, showSuccess]);
 
   useEffect(() => {
-    fetchDashboardData();
-    const refreshTimer = window.setInterval(() => fetchDashboardData(), 5000);
-    return () => window.clearInterval(refreshTimer);
-  }, []);
+    const loadDashboardData = async () => {
+      await fetchDashboardData();
+    };
+
+    loadDashboardData();
+  }, [fetchDashboardData]);
 
   // Category chart colors
   const CATEGORY_COLORS = ['#0A365C', '#0284C7', '#059669', '#D97706', '#4F46E5', '#DC2626'];

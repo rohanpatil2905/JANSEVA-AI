@@ -5,14 +5,28 @@ import { useAuth } from "../context/AuthContext";
 function TrackComplaint() {
     const { id } = useParams();
     const { user } = useAuth();
-
     const { complaints } = useComplaints();
 
-    const complaint = complaints.find(
-        (item) =>
-            item.id === id &&
-            item.userEmail === user.email
-    );
+    const complaint = complaints.find((item) => {
+        if (String(item.id) !== String(id)) {
+            return false;
+        }
+
+        // Support both the old frontend userEmail format
+        // and the backend userId format.
+        const sameUserId =
+            item.userId &&
+            user?.id &&
+            String(item.userId) === String(user.id);
+
+        const sameEmail =
+            item.userEmail &&
+            user?.email &&
+            String(item.userEmail).toLowerCase() ===
+                String(user.email).toLowerCase();
+
+        return sameUserId || sameEmail;
+    });
 
     if (!complaint) {
         return (
@@ -73,7 +87,6 @@ function TrackComplaint() {
 
             </div>
 
-
             <div className="status-timeline">
 
                 <h2>Complaint Status</h2>
@@ -85,10 +98,9 @@ function TrackComplaint() {
 
                     return (
                         <div
-                            className={`timeline-item ${isCompleted
-                                ? "completed"
-                                : ""
-                                }`}
+                            className={`timeline-item ${
+                                isCompleted ? "completed" : ""
+                            }`}
                             key={status}
                         >
 
@@ -142,7 +154,6 @@ function TrackComplaint() {
                 })}
 
             </div>
-
 
             <Link
                 to={`/complaint/${complaint.id}`}

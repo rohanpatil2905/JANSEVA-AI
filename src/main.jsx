@@ -5,7 +5,6 @@ import "./index.css";
 import App from "./App.jsx";
 
 import { AuthProvider } from "./context/AuthContext";
-import { ComplaintProvider } from "./context/ComplaintContext";
 import { LanguageProvider } from "./context/LanguageContext";
 
 createRoot(document.getElementById("root")).render(
@@ -13,9 +12,7 @@ createRoot(document.getElementById("root")).render(
     <LanguageProvider>
       <BrowserRouter>
         <AuthProvider>
-          <ComplaintProvider>
-            <App />
-          </ComplaintProvider>
+          <App />
         </AuthProvider>
       </BrowserRouter>
     </LanguageProvider>

@@ -103,7 +103,7 @@ axiosInstance.interceptors.response.use(
 
     switch (status) {
       case 400:
-        message = data?.message || 'Invalid grievance request parameters.';
+        message = data?.error || data?.message || 'Invalid grievance request parameters.';
         code = code || 'BAD_REQUEST';
         break;
       case 401:

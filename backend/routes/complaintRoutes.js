@@ -158,6 +158,8 @@ router.post(
         try {
             const {
                 resolution_scope,
+                resolution_type,
+                resolutionType,
 
                 resolution_summary,
                 resolutionSummary,
@@ -165,12 +167,20 @@ router.post(
 
                 technical_actions,
                 technicalActions,
+                actions_taken,
+                actionsTaken,
 
                 rectified_area_coverage,
                 rectifiedAreaCoverage,
+                affected_area,
+                affectedArea,
 
                 statutory_confirmation,
-                statutoryConfirmation
+                statutoryConfirmation,
+                statutory_officer_confirmation,
+                statutoryOfficerConfirmation,
+                is_confirmed,
+                isConfirmed
             } = req.body || {};
 
 
@@ -186,17 +196,31 @@ router.post(
             const finalTechnicalActions =
                 technical_actions ||
                 technicalActions ||
+                actions_taken ||
+                actionsTaken ||
                 null;
 
             const finalRectifiedAreaCoverage =
                 rectified_area_coverage ||
                 rectifiedAreaCoverage ||
+                affected_area ||
+                affectedArea ||
                 null;
 
-            const finalStatutoryConfirmation =
-                statutory_confirmation ||
-                statutoryConfirmation ||
+            const rawStatutoryConfirmation =
+                statutory_confirmation !== undefined ? statutory_confirmation :
+                statutoryConfirmation !== undefined ? statutoryConfirmation :
+                statutory_officer_confirmation !== undefined ? statutory_officer_confirmation :
+                statutoryOfficerConfirmation !== undefined ? statutoryOfficerConfirmation :
+                is_confirmed !== undefined ? is_confirmed :
+                isConfirmed !== undefined ? isConfirmed :
                 false;
+
+            const finalStatutoryConfirmation =
+                rawStatutoryConfirmation === true ||
+                rawStatutoryConfirmation === 'true' ||
+                rawStatutoryConfirmation === 1 ||
+                rawStatutoryConfirmation === '1';
 
 
             // ------------------------------------------------
@@ -256,7 +280,10 @@ router.post(
                 'RESOLUTION_SUBMITTED',
                 {
                     resolution_scope:
-                        resolution_scope || null,
+                        resolution_scope ||
+                        resolution_type ||
+                        resolutionType ||
+                        null,
 
                     resolution_summary:
                         finalResolutionSummary,

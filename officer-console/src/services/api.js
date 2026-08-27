@@ -593,14 +593,30 @@ export async function uploadEvidence(complaintId, file, metadata = {}) {
  * Submit Final Operational Resolution
  * Endpoint: POST /complaints/:id/resolve
  */
-export async function submitResolution(complaintId, { resolutionType, summary, actionsTaken, affectedArea, citizenNotified, officerName, officerRole }) {
+export async function submitResolution(complaintId, { resolutionType, summary, actionsTaken, affectedArea, citizenNotified, officerName, officerRole, statutory_confirmation, statutoryConfirmation, isConfirmed }) {
+  const confirmed = Boolean(
+    statutory_confirmation !== undefined
+      ? statutory_confirmation
+      : statutoryConfirmation !== undefined
+      ? statutoryConfirmation
+      : isConfirmed !== undefined
+      ? isConfirmed
+      : false
+  );
+
   if (isApiMode()) {
     try {
       const data = await apiClient.post(`/complaints/${complaintId}/resolve`, {
+        resolution_scope: resolutionType,
         resolution_type: resolutionType,
+        resolution_summary: summary,
         summary,
+        technical_actions: actionsTaken,
         actions_taken: actionsTaken,
+        rectified_area_coverage: affectedArea,
         affected_area: affectedArea,
+        statutory_confirmation: confirmed,
+        statutoryConfirmation: confirmed,
         citizen_notified: citizenNotified ?? true,
         officer_name: officerName,
         officer_role: officerRole,

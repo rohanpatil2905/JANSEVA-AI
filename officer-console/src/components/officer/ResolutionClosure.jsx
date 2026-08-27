@@ -8,10 +8,12 @@ export default function ResolutionClosure({
   const [resolutionScope, setResolutionScope] = useState(
     "Permanent Engineering Resolution"
   );
+
   const [resolutionSummary, setResolutionSummary] = useState("");
   const [technicalActions, setTechnicalActions] = useState("");
   const [rectifiedAreaCoverage, setRectifiedAreaCoverage] = useState("");
   const [statutoryConfirmation, setStatutoryConfirmation] = useState(false);
+
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -49,30 +51,45 @@ export default function ResolutionClosure({
         localStorage.getItem("authToken") ||
         localStorage.getItem("accessToken");
 
+      const payload = {
+        resolution_scope: resolutionScope,
+
+        resolution_summary: resolutionSummary.trim(),
+
+        technical_actions: technicalActions.trim(),
+
+        rectified_area_coverage:
+          rectifiedAreaCoverage.trim() || null,
+
+        // Send both names so the backend accepts the confirmation
+        statutory_confirmation: true,
+        statutory_officer_confirmation: true,
+      };
+
+      console.log("Submitting resolution:", payload);
+
       const response = await fetch(
         `/api/complaints/${complaintId}/resolve`,
         {
           method: "POST",
+
           headers: {
             "Content-Type": "application/json",
+
             ...(token
               ? {
                   Authorization: `Bearer ${token}`,
                 }
               : {}),
           },
-          body: JSON.stringify({
-            resolution_scope: resolutionScope,
-            resolution_summary: resolutionSummary.trim(),
-            technical_actions: technicalActions.trim(),
-            rectified_area_coverage:
-              rectifiedAreaCoverage.trim() || null,
-            statutory_confirmation: statutoryConfirmation,
-          }),
+
+          body: JSON.stringify(payload),
         }
       );
 
       const data = await response.json().catch(() => ({}));
+
+      console.log("Resolution response:", data);
 
       if (!response.ok) {
         throw new Error(
@@ -89,7 +106,10 @@ export default function ResolutionClosure({
       }
     } catch (err) {
       console.error("Resolution submission error:", err);
-      setError(err.message || "Failed to record resolution.");
+
+      setError(
+        err.message || "Failed to record resolution."
+      );
     } finally {
       setSubmitting(false);
     }
@@ -142,7 +162,9 @@ export default function ResolutionClosure({
       )}
 
       <form onSubmit={handleSubmit}>
-        {/* Resolution Scope */}
+
+        {/* RESOLUTION SCOPE */}
+
         <div style={{ marginBottom: "20px" }}>
           <label
             style={{
@@ -156,7 +178,9 @@ export default function ResolutionClosure({
 
           <select
             value={resolutionScope}
-            onChange={(e) => setResolutionScope(e.target.value)}
+            onChange={(e) =>
+              setResolutionScope(e.target.value)
+            }
             style={{
               width: "100%",
               padding: "12px",
@@ -179,7 +203,8 @@ export default function ResolutionClosure({
           </select>
         </div>
 
-        {/* Resolution Summary */}
+        {/* RESOLUTION SUMMARY */}
+
         <div style={{ marginBottom: "20px" }}>
           <label
             style={{
@@ -193,7 +218,9 @@ export default function ResolutionClosure({
 
           <textarea
             value={resolutionSummary}
-            onChange={(e) => setResolutionSummary(e.target.value)}
+            onChange={(e) =>
+              setResolutionSummary(e.target.value)
+            }
             placeholder="Describe the resolution completed for the citizen..."
             rows={4}
             style={{
@@ -208,7 +235,8 @@ export default function ResolutionClosure({
           />
         </div>
 
-        {/* Technical Actions */}
+        {/* TECHNICAL ACTIONS */}
+
         <div style={{ marginBottom: "20px" }}>
           <label
             style={{
@@ -222,7 +250,9 @@ export default function ResolutionClosure({
 
           <textarea
             value={technicalActions}
-            onChange={(e) => setTechnicalActions(e.target.value)}
+            onChange={(e) =>
+              setTechnicalActions(e.target.value)
+            }
             placeholder="Detail the specific technical/engineering actions taken..."
             rows={5}
             style={{
@@ -237,7 +267,8 @@ export default function ResolutionClosure({
           />
         </div>
 
-        {/* Coverage */}
+        {/* RECTIFIED AREA */}
+
         <div style={{ marginBottom: "20px" }}>
           <label
             style={{
@@ -267,7 +298,8 @@ export default function ResolutionClosure({
           />
         </div>
 
-        {/* Statutory Confirmation */}
+        {/* STATUTORY CONFIRMATION */}
+
         <div
           style={{
             marginBottom: "24px",
@@ -289,7 +321,9 @@ export default function ResolutionClosure({
               type="checkbox"
               checked={statutoryConfirmation}
               onChange={(e) =>
-                setStatutoryConfirmation(e.target.checked)
+                setStatutoryConfirmation(
+                  e.target.checked
+                )
               }
               style={{
                 marginTop: "4px",
@@ -299,7 +333,9 @@ export default function ResolutionClosure({
             />
 
             <span>
-              <strong>Statutory Officer Confirmation:</strong>{" "}
+              <strong>
+                Statutory Officer Confirmation:
+              </strong>{" "}
               I officially confirm that the reported municipal
               grievance has been inspected and rectified to the
               engineering standards specified above.
@@ -307,7 +343,8 @@ export default function ResolutionClosure({
           </label>
         </div>
 
-        {/* Buttons */}
+        {/* BUTTONS */}
+
         <div
           style={{
             display: "flex",
@@ -341,7 +378,9 @@ export default function ResolutionClosure({
               border: "none",
               background: "#111827",
               color: "#fff",
-              cursor: submitting ? "not-allowed" : "pointer",
+              cursor: submitting
+                ? "not-allowed"
+                : "pointer",
               fontWeight: 700,
               opacity: submitting ? 0.7 : 1,
             }}

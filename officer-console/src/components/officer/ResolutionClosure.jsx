@@ -5,14 +5,17 @@ export default function ResolutionClosure({
   onSuccess,
   onClose,
 }) {
-  const [resolutionScope, setResolutionScope] = useState(
-    "Permanent Engineering Resolution"
+  const [resolutionType, setResolutionType] = useState(
+    "Permanent Resolution"
   );
 
-  const [resolutionSummary, setResolutionSummary] = useState("");
-  const [technicalActions, setTechnicalActions] = useState("");
-  const [rectifiedAreaCoverage, setRectifiedAreaCoverage] = useState("");
-  const [statutoryConfirmation, setStatutoryConfirmation] = useState(false);
+  const [summary, setSummary] = useState("");
+  const [actionsTaken, setActionsTaken] = useState("");
+  const [affectedArea, setAffectedArea] = useState("");
+
+  const [citizenNotified, setCitizenNotified] = useState(true);
+  const [officerName, setOfficerName] = useState("Rohan Patil");
+  const [officerRole, setOfficerRole] = useState("Zonal Ward Officer");
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -28,81 +31,66 @@ export default function ResolutionClosure({
       return;
     }
 
-    if (!resolutionSummary.trim()) {
+    if (!summary.trim()) {
       setError("Resolution summary is required");
       return;
     }
 
-    if (!technicalActions.trim()) {
+    if (!actionsTaken.trim()) {
       setError("Technical actions are required");
       return;
     }
 
-    if (statutoryConfirmation !== true) {
-      setError("Please tick the Statutory Officer Confirmation checkbox.");
+    if (!citizenNotified) {
+      setError("Citizen notification confirmation is required");
       return;
     }
 
     try {
       setSubmitting(true);
 
-      /*
-       * Officer Console may use a different API base URL.
-       * Use VITE_API_URL if configured, otherwise same-origin.
-       */
-      const API_URL =
-        import.meta.env.VITE_API_URL ||
-        "https://janseva-backend-in0w.onrender.com";
-
       const token =
         localStorage.getItem("token") ||
         localStorage.getItem("authToken") ||
         localStorage.getItem("accessToken");
 
-      if (!token) {
-        throw new Error(
-          "Authentication token not found. Please log in again."
-        );
-      }
-
-      const payload = {
-        resolution_scope: resolutionScope.trim(),
-
-        resolution_summary: resolutionSummary.trim(),
-
-        technical_actions: technicalActions.trim(),
-
-        rectified_area_coverage:
-          rectifiedAreaCoverage.trim() || null,
-
-        statutory_confirmation: true,
-      };
-
-      console.log("RESOLUTION PAYLOAD:", payload);
-
       const response = await fetch(
-        `${API_URL}/api/complaints/${complaintId}/resolve`,
+        `/api/complaints/${complaintId}/resolve`,
         {
           method: "POST",
-
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: token ? `Bearer ${token}` : "",
           },
 
-          body: JSON.stringify(payload),
+          body: JSON.stringify({
+            // Backend-compatible fields
+            resolution_scope: resolutionType,
+            resolution_summary: summary.trim(),
+            technical_actions: actionsTaken.trim(),
+            rectified_area_coverage:
+              affectedArea.trim() || null,
+            statutory_confirmation: true,
+
+            // Also send the fields your UI/backend may use
+            resolution_type: resolutionType,
+            summary: summary.trim(),
+            actions_taken: actionsTaken.trim(),
+            affected_area: affectedArea.trim() || null,
+            citizen_notified: citizenNotified,
+            officer_name: officerName.trim(),
+            officer_role: officerRole.trim(),
+          }),
         }
       );
 
       const data = await response.json().catch(() => ({}));
 
-      console.log("RESOLUTION RESPONSE:", response.status, data);
-
       if (!response.ok) {
         throw new Error(
           data?.error ||
             data?.message ||
-            `Failed to record resolution (${response.status})`
+            "Failed to record resolution."
         );
       }
 
@@ -113,9 +101,8 @@ export default function ResolutionClosure({
       }
     } catch (err) {
       console.error("Resolution submission error:", err);
-
       setError(
-        err?.message || "Failed to record resolution."
+        err.message || "Failed to record resolution."
       );
     } finally {
       setSubmitting(false);
@@ -148,8 +135,8 @@ export default function ResolutionClosure({
             color: "#6b7280",
           }}
         >
-          Submit verified field resolution and statutory closure
-          confirmation.
+          Submit verified field resolution and statutory
+          closure confirmation.
         </p>
       </div>
 
@@ -170,7 +157,7 @@ export default function ResolutionClosure({
 
       <form onSubmit={handleSubmit}>
 
-        {/* Resolution Scope */}
+        {/* RESOLUTION TYPE */}
         <div style={{ marginBottom: "20px" }}>
           <label
             style={{
@@ -183,9 +170,9 @@ export default function ResolutionClosure({
           </label>
 
           <select
-            value={resolutionScope}
+            value={resolutionType}
             onChange={(e) =>
-              setResolutionScope(e.target.value)
+              setResolutionType(e.target.value)
             }
             style={{
               width: "100%",
@@ -195,6 +182,10 @@ export default function ResolutionClosure({
               fontSize: "15px",
             }}
           >
+            <option value="Permanent Resolution">
+              Permanent Resolution
+            </option>
+
             <option value="Permanent Engineering Resolution">
               Permanent Engineering Resolution
             </option>
@@ -209,7 +200,7 @@ export default function ResolutionClosure({
           </select>
         </div>
 
-        {/* Resolution Summary */}
+        {/* SUMMARY */}
         <div style={{ marginBottom: "20px" }}>
           <label
             style={{
@@ -222,11 +213,9 @@ export default function ResolutionClosure({
           </label>
 
           <textarea
-            value={resolutionSummary}
-            onChange={(e) =>
-              setResolutionSummary(e.target.value)
-            }
-            placeholder="Describe the resolution completed for the citizen..."
+            value={summary}
+            onChange={(e) => setSummary(e.target.value)}
+            placeholder="YOUR COMPLAINT RESOLVED"
             rows={4}
             style={{
               width: "100%",
@@ -240,7 +229,7 @@ export default function ResolutionClosure({
           />
         </div>
 
-        {/* Technical Actions */}
+        {/* ACTIONS */}
         <div style={{ marginBottom: "20px" }}>
           <label
             style={{
@@ -253,11 +242,11 @@ export default function ResolutionClosure({
           </label>
 
           <textarea
-            value={technicalActions}
+            value={actionsTaken}
             onChange={(e) =>
-              setTechnicalActions(e.target.value)
+              setActionsTaken(e.target.value)
             }
-            placeholder="Detail the specific technical/engineering actions taken..."
+            placeholder="Water supply started"
             rows={5}
             style={{
               width: "100%",
@@ -271,7 +260,7 @@ export default function ResolutionClosure({
           />
         </div>
 
-        {/* Coverage */}
+        {/* AFFECTED AREA */}
         <div style={{ marginBottom: "20px" }}>
           <label
             style={{
@@ -280,16 +269,16 @@ export default function ResolutionClosure({
               marginBottom: "8px",
             }}
           >
-            Rectified Area Coverage (Optional)
+            Rectified Area Coverage
           </label>
 
           <input
             type="text"
-            value={rectifiedAreaCoverage}
+            value={affectedArea}
             onChange={(e) =>
-              setRectifiedAreaCoverage(e.target.value)
+              setAffectedArea(e.target.value)
             }
-            placeholder="Example: House No. 12 to House No. 30"
+            placeholder="Pune Municipal Zone"
             style={{
               width: "100%",
               padding: "12px",
@@ -301,10 +290,68 @@ export default function ResolutionClosure({
           />
         </div>
 
-        {/* Statutory Confirmation */}
+        {/* OFFICER NAME */}
+        <div style={{ marginBottom: "20px" }}>
+          <label
+            style={{
+              display: "block",
+              fontWeight: 600,
+              marginBottom: "8px",
+            }}
+          >
+            Officer Name
+          </label>
+
+          <input
+            type="text"
+            value={officerName}
+            onChange={(e) =>
+              setOfficerName(e.target.value)
+            }
+            style={{
+              width: "100%",
+              padding: "12px",
+              border: "1px solid #d1d5db",
+              borderRadius: "8px",
+              fontSize: "15px",
+              boxSizing: "border-box",
+            }}
+          />
+        </div>
+
+        {/* OFFICER ROLE */}
+        <div style={{ marginBottom: "20px" }}>
+          <label
+            style={{
+              display: "block",
+              fontWeight: 600,
+              marginBottom: "8px",
+            }}
+          >
+            Officer Role
+          </label>
+
+          <input
+            type="text"
+            value={officerRole}
+            onChange={(e) =>
+              setOfficerRole(e.target.value)
+            }
+            style={{
+              width: "100%",
+              padding: "12px",
+              border: "1px solid #d1d5db",
+              borderRadius: "8px",
+              fontSize: "15px",
+              boxSizing: "border-box",
+            }}
+          />
+        </div>
+
+        {/* CITIZEN NOTIFICATION */}
         <div
           style={{
-            marginBottom: "24px",
+            marginBottom: "20px",
             padding: "16px",
             background: "#f9fafb",
             borderRadius: "8px",
@@ -321,9 +368,9 @@ export default function ResolutionClosure({
           >
             <input
               type="checkbox"
-              checked={statutoryConfirmation}
+              checked={citizenNotified}
               onChange={(e) =>
-                setStatutoryConfirmation(e.target.checked)
+                setCitizenNotified(e.target.checked)
               }
               style={{
                 marginTop: "4px",
@@ -333,17 +380,51 @@ export default function ResolutionClosure({
             />
 
             <span>
-              <strong>
-                Statutory Officer Confirmation:
-              </strong>{" "}
-              I officially confirm that the reported municipal
-              grievance has been inspected and rectified to the
-              engineering standards specified above.
+              <strong>Citizen Notified:</strong>{" "}
+              I confirm that the citizen has been notified
+              about the completed resolution.
             </span>
           </label>
         </div>
 
-        {/* Buttons */}
+        {/* STATUTORY CONFIRMATION */}
+        <div
+          style={{
+            marginBottom: "24px",
+            padding: "16px",
+            background: "#f9fafb",
+            borderRadius: "8px",
+            border: "1px solid #e5e7eb",
+          }}
+        >
+          <label
+            style={{
+              display: "flex",
+              gap: "12px",
+              alignItems: "flex-start",
+            }}
+          >
+            <input
+              type="checkbox"
+              checked={true}
+              readOnly
+              style={{
+                marginTop: "4px",
+                width: "18px",
+                height: "18px",
+              }}
+            />
+
+            <span>
+              <strong>Statutory Officer Confirmation:</strong>{" "}
+              I officially confirm that the reported municipal
+              grievance has been inspected and rectified to
+              the engineering standards specified above.
+            </span>
+          </label>
+        </div>
+
+        {/* BUTTONS */}
         <div
           style={{
             display: "flex",

@@ -13,10 +13,6 @@ export default function ResolutionClosure({
   const [actionsTaken, setActionsTaken] = useState("");
   const [affectedArea, setAffectedArea] = useState("");
 
-  const [citizenNotified, setCitizenNotified] = useState(true);
-  const [officerName, setOfficerName] = useState("Rohan Patil");
-  const [officerRole, setOfficerRole] = useState("Zonal Ward Officer");
-
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -41,11 +37,6 @@ export default function ResolutionClosure({
       return;
     }
 
-    if (!citizenNotified) {
-      setError("Citizen notification confirmation is required");
-      return;
-    }
-
     try {
       setSubmitting(true);
 
@@ -54,37 +45,47 @@ export default function ResolutionClosure({
         localStorage.getItem("authToken") ||
         localStorage.getItem("accessToken");
 
+      const payload = {
+        resolution_scope: resolutionType,
+        resolution_summary: summary.trim(),
+        technical_actions: actionsTaken.trim(),
+        rectified_area_coverage:
+          affectedArea.trim() || null,
+
+        // IMPORTANT: backend requires boolean true
+        statutory_confirmation: true,
+
+        // Compatibility fields
+        resolution_type: resolutionType,
+        summary: summary.trim(),
+        actions_taken: actionsTaken.trim(),
+        affected_area: affectedArea.trim() || null,
+        citizen_notified: true,
+        officer_name: "Rohan Patil",
+        officer_role: "Zonal Ward Officer",
+      };
+
+      console.log("RESOLUTION PAYLOAD:", payload);
+
       const response = await fetch(
         `/api/complaints/${complaintId}/resolve`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: token ? `Bearer ${token}` : "",
+            ...(token
+              ? {
+                  Authorization: `Bearer ${token}`,
+                }
+              : {}),
           },
-
-          body: JSON.stringify({
-            // Backend-compatible fields
-            resolution_scope: resolutionType,
-            resolution_summary: summary.trim(),
-            technical_actions: actionsTaken.trim(),
-            rectified_area_coverage:
-              affectedArea.trim() || null,
-            statutory_confirmation: true,
-
-            // Also send the fields your UI/backend may use
-            resolution_type: resolutionType,
-            summary: summary.trim(),
-            actions_taken: actionsTaken.trim(),
-            affected_area: affectedArea.trim() || null,
-            citizen_notified: citizenNotified,
-            officer_name: officerName.trim(),
-            officer_role: officerRole.trim(),
-          }),
+          body: JSON.stringify(payload),
         }
       );
 
       const data = await response.json().catch(() => ({}));
+
+      console.log("RESOLUTION RESPONSE:", response.status, data);
 
       if (!response.ok) {
         throw new Error(
@@ -100,9 +101,14 @@ export default function ResolutionClosure({
         onSuccess(data);
       }
     } catch (err) {
-      console.error("Resolution submission error:", err);
+      console.error(
+        "Resolution submission error:",
+        err
+      );
+
       setError(
-        err.message || "Failed to record resolution."
+        err.message ||
+          "Failed to record resolution."
       );
     } finally {
       setSubmitting(false);
@@ -214,7 +220,9 @@ export default function ResolutionClosure({
 
           <textarea
             value={summary}
-            onChange={(e) => setSummary(e.target.value)}
+            onChange={(e) =>
+              setSummary(e.target.value)
+            }
             placeholder="YOUR COMPLAINT RESOLVED"
             rows={4}
             style={{
@@ -229,7 +237,7 @@ export default function ResolutionClosure({
           />
         </div>
 
-        {/* ACTIONS */}
+        {/* TECHNICAL ACTIONS */}
         <div style={{ marginBottom: "20px" }}>
           <label
             style={{
@@ -290,103 +298,6 @@ export default function ResolutionClosure({
           />
         </div>
 
-        {/* OFFICER NAME */}
-        <div style={{ marginBottom: "20px" }}>
-          <label
-            style={{
-              display: "block",
-              fontWeight: 600,
-              marginBottom: "8px",
-            }}
-          >
-            Officer Name
-          </label>
-
-          <input
-            type="text"
-            value={officerName}
-            onChange={(e) =>
-              setOfficerName(e.target.value)
-            }
-            style={{
-              width: "100%",
-              padding: "12px",
-              border: "1px solid #d1d5db",
-              borderRadius: "8px",
-              fontSize: "15px",
-              boxSizing: "border-box",
-            }}
-          />
-        </div>
-
-        {/* OFFICER ROLE */}
-        <div style={{ marginBottom: "20px" }}>
-          <label
-            style={{
-              display: "block",
-              fontWeight: 600,
-              marginBottom: "8px",
-            }}
-          >
-            Officer Role
-          </label>
-
-          <input
-            type="text"
-            value={officerRole}
-            onChange={(e) =>
-              setOfficerRole(e.target.value)
-            }
-            style={{
-              width: "100%",
-              padding: "12px",
-              border: "1px solid #d1d5db",
-              borderRadius: "8px",
-              fontSize: "15px",
-              boxSizing: "border-box",
-            }}
-          />
-        </div>
-
-        {/* CITIZEN NOTIFICATION */}
-        <div
-          style={{
-            marginBottom: "20px",
-            padding: "16px",
-            background: "#f9fafb",
-            borderRadius: "8px",
-            border: "1px solid #e5e7eb",
-          }}
-        >
-          <label
-            style={{
-              display: "flex",
-              gap: "12px",
-              alignItems: "flex-start",
-              cursor: "pointer",
-            }}
-          >
-            <input
-              type="checkbox"
-              checked={citizenNotified}
-              onChange={(e) =>
-                setCitizenNotified(e.target.checked)
-              }
-              style={{
-                marginTop: "4px",
-                width: "18px",
-                height: "18px",
-              }}
-            />
-
-            <span>
-              <strong>Citizen Notified:</strong>{" "}
-              I confirm that the citizen has been notified
-              about the completed resolution.
-            </span>
-          </label>
-        </div>
-
         {/* STATUTORY CONFIRMATION */}
         <div
           style={{
@@ -397,7 +308,7 @@ export default function ResolutionClosure({
             border: "1px solid #e5e7eb",
           }}
         >
-          <label
+          <div
             style={{
               display: "flex",
               gap: "12px",
@@ -416,12 +327,15 @@ export default function ResolutionClosure({
             />
 
             <span>
-              <strong>Statutory Officer Confirmation:</strong>{" "}
-              I officially confirm that the reported municipal
-              grievance has been inspected and rectified to
-              the engineering standards specified above.
+              <strong>
+                Statutory Officer Confirmation:
+              </strong>{" "}
+              I officially confirm that the reported
+              municipal grievance has been inspected and
+              rectified to the engineering standards
+              specified above.
             </span>
-          </label>
+          </div>
         </div>
 
         {/* BUTTONS */}

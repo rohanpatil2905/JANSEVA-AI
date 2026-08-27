@@ -38,21 +38,35 @@ export default function ResolutionClosure({
       return;
     }
 
-    if (!statutoryConfirmation) {
-      setError("Statutory officer confirmation is required");
+    if (statutoryConfirmation !== true) {
+      setError("Please tick the Statutory Officer Confirmation checkbox.");
       return;
     }
 
     try {
       setSubmitting(true);
 
+      /*
+       * Officer Console may use a different API base URL.
+       * Use VITE_API_URL if configured, otherwise same-origin.
+       */
+      const API_URL =
+        import.meta.env.VITE_API_URL ||
+        "https://janseva-backend-in0w.onrender.com";
+
       const token =
         localStorage.getItem("token") ||
         localStorage.getItem("authToken") ||
         localStorage.getItem("accessToken");
 
+      if (!token) {
+        throw new Error(
+          "Authentication token not found. Please log in again."
+        );
+      }
+
       const payload = {
-        resolution_scope: resolutionScope,
+        resolution_scope: resolutionScope.trim(),
 
         resolution_summary: resolutionSummary.trim(),
 
@@ -61,26 +75,19 @@ export default function ResolutionClosure({
         rectified_area_coverage:
           rectifiedAreaCoverage.trim() || null,
 
-        // Send both names so the backend accepts the confirmation
         statutory_confirmation: true,
-        statutory_officer_confirmation: true,
       };
 
-      console.log("Submitting resolution:", payload);
+      console.log("RESOLUTION PAYLOAD:", payload);
 
       const response = await fetch(
-        `/api/complaints/${complaintId}/resolve`,
+        `${API_URL}/api/complaints/${complaintId}/resolve`,
         {
           method: "POST",
 
           headers: {
             "Content-Type": "application/json",
-
-            ...(token
-              ? {
-                  Authorization: `Bearer ${token}`,
-                }
-              : {}),
+            Authorization: `Bearer ${token}`,
           },
 
           body: JSON.stringify(payload),
@@ -89,13 +96,13 @@ export default function ResolutionClosure({
 
       const data = await response.json().catch(() => ({}));
 
-      console.log("Resolution response:", data);
+      console.log("RESOLUTION RESPONSE:", response.status, data);
 
       if (!response.ok) {
         throw new Error(
           data?.error ||
             data?.message ||
-            "Failed to record resolution."
+            `Failed to record resolution (${response.status})`
         );
       }
 
@@ -108,7 +115,7 @@ export default function ResolutionClosure({
       console.error("Resolution submission error:", err);
 
       setError(
-        err.message || "Failed to record resolution."
+        err?.message || "Failed to record resolution."
       );
     } finally {
       setSubmitting(false);
@@ -163,8 +170,7 @@ export default function ResolutionClosure({
 
       <form onSubmit={handleSubmit}>
 
-        {/* RESOLUTION SCOPE */}
-
+        {/* Resolution Scope */}
         <div style={{ marginBottom: "20px" }}>
           <label
             style={{
@@ -203,8 +209,7 @@ export default function ResolutionClosure({
           </select>
         </div>
 
-        {/* RESOLUTION SUMMARY */}
-
+        {/* Resolution Summary */}
         <div style={{ marginBottom: "20px" }}>
           <label
             style={{
@@ -235,8 +240,7 @@ export default function ResolutionClosure({
           />
         </div>
 
-        {/* TECHNICAL ACTIONS */}
-
+        {/* Technical Actions */}
         <div style={{ marginBottom: "20px" }}>
           <label
             style={{
@@ -267,8 +271,7 @@ export default function ResolutionClosure({
           />
         </div>
 
-        {/* RECTIFIED AREA */}
-
+        {/* Coverage */}
         <div style={{ marginBottom: "20px" }}>
           <label
             style={{
@@ -298,8 +301,7 @@ export default function ResolutionClosure({
           />
         </div>
 
-        {/* STATUTORY CONFIRMATION */}
-
+        {/* Statutory Confirmation */}
         <div
           style={{
             marginBottom: "24px",
@@ -321,9 +323,7 @@ export default function ResolutionClosure({
               type="checkbox"
               checked={statutoryConfirmation}
               onChange={(e) =>
-                setStatutoryConfirmation(
-                  e.target.checked
-                )
+                setStatutoryConfirmation(e.target.checked)
               }
               style={{
                 marginTop: "4px",
@@ -343,8 +343,7 @@ export default function ResolutionClosure({
           </label>
         </div>
 
-        {/* BUTTONS */}
-
+        {/* Buttons */}
         <div
           style={{
             display: "flex",

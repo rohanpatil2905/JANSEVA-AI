@@ -37,7 +37,7 @@ const { logAudit } = require('../db/auditLog');
 
 
 // ============================================================
-// AUTHENTICATION
+// AUTH
 // ============================================================
 
 router.use(requireAuth);
@@ -66,7 +66,7 @@ router.post(
 
 
 // ============================================================
-// AI / OFFICER RESPONSE TRANSLATION
+// TRANSLATE OFFICER RESPONSE
 // ============================================================
 
 router.post(
@@ -120,7 +120,7 @@ router.get(
 
 
 // ============================================================
-// COMPLAINT LOCATION
+// LOCATION
 // ============================================================
 
 router.get(
@@ -132,7 +132,7 @@ router.get(
 
 
 // ============================================================
-// UPDATE COMPLAINT STATUS
+// UPDATE STATUS
 // ============================================================
 
 router.put(
@@ -158,6 +158,7 @@ router.post(
         try {
             const {
                 resolution_scope,
+
                 resolution_summary,
                 resolutionSummary,
                 summary,
@@ -174,7 +175,7 @@ router.post(
 
 
             // ------------------------------------------------
-            // Accept multiple frontend field-name variations
+            // Normalize frontend field names
             // ------------------------------------------------
 
             const finalResolutionSummary =
@@ -184,19 +185,22 @@ router.post(
 
             const finalTechnicalActions =
                 technical_actions ||
-                technicalActions;
+                technicalActions ||
+                null;
 
             const finalRectifiedAreaCoverage =
                 rectified_area_coverage ||
-                rectifiedAreaCoverage;
+                rectifiedAreaCoverage ||
+                null;
 
             const finalStatutoryConfirmation =
                 statutory_confirmation ||
-                statutoryConfirmation;
+                statutoryConfirmation ||
+                false;
 
 
             // ------------------------------------------------
-            // VALIDATION
+            // REQUIRED VALIDATION
             // ------------------------------------------------
 
             if (!finalResolutionSummary) {
@@ -205,17 +209,16 @@ router.post(
                 });
             }
 
-            if (!finalTechnicalActions) {
-                return res.status(400).json({
-                    error: 'Technical actions are required'
-                });
-            }
-
             if (!finalStatutoryConfirmation) {
                 return res.status(400).json({
                     error: 'Statutory officer confirmation is required'
                 });
             }
+
+
+            // ------------------------------------------------
+            // STATUS CHECK
+            // ------------------------------------------------
 
             if (req.complaint.status !== 'in_progress') {
                 return res.status(400).json({
@@ -244,7 +247,7 @@ router.post(
 
 
             // ------------------------------------------------
-            // AUDIT LOG
+            // AUDIT
             // ------------------------------------------------
 
             await logAudit(
@@ -262,10 +265,10 @@ router.post(
                         finalTechnicalActions,
 
                     rectified_area_coverage:
-                        finalRectifiedAreaCoverage || null,
+                        finalRectifiedAreaCoverage,
 
                     statutory_confirmation:
-                        true
+                        finalStatutoryConfirmation
                 }
             );
 
@@ -308,7 +311,7 @@ router.get(
 
 
 // ============================================================
-// MEDIA - JSON URL
+// MEDIA URL
 // ============================================================
 
 router.post(
@@ -320,7 +323,7 @@ router.post(
 
 
 // ============================================================
-// MEDIA - FILE UPLOAD
+// MEDIA UPLOAD
 // ============================================================
 
 router.post(
@@ -331,12 +334,15 @@ router.post(
         upload.single('file')(
             req,
             res,
-            err =>
-                err
-                    ? res.status(400).json({
+            err => {
+                if (err) {
+                    return res.status(400).json({
                         error: err.message
-                    })
-                    : next()
+                    });
+                }
+
+                next();
+            }
         ),
     uploadMedia
 );

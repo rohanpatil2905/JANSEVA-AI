@@ -200,6 +200,81 @@ router.post(
  * Citizen confirms/rejects resolution.
  */
 router.post(
+    '/:id/resolve',
+    requireRole('officer', 'admin'),
+    getComplaintForRequest,
+    requireComplaintAccess,
+    async (req, res) => {
+        try {
+            const {
+                resolution_scope,
+                resolution_summary,
+                technical_actions,
+                rectified_area_coverage,
+                statutory_confirmation
+            } = req.body;
+
+            if (!resolution_summary) {
+                return res.status(400).json({
+                    error: 'Resolution summary is required'
+                });
+            }
+
+            if (!technical_actions) {
+                return res.status(400).json({
+                    error: 'Technical actions are required'
+                });
+            }
+
+            if (req.complaint.status !== 'in_progress') {
+                return res.status(400).json({
+                    error: `Complaint must be in_progress before resolution. Current status: ${req.complaint.status}`
+                });
+            }
+
+            if (!statutory_confirmation) {
+                return res.status(400).json({
+                    error: 'Statutory officer confirmation is required'
+                });
+            }
+
+            const result = await pool.query(
+                `UPDATE complaints
+                 SET status = 'resolved',
+                     updated_at = NOW()
+                 WHERE id = $1
+                 RETURNING *`,
+                [req.complaint.id]
+            );
+
+            await logAudit(
+                req.complaint.id,
+                req.user.id,
+                'RESOLUTION_SUBMITTED',
+                {
+                    resolution_scope: resolution_scope || null,
+                    resolution_summary,
+                    technical_actions,
+                    rectified_area_coverage: rectified_area_coverage || null,
+                    statutory_confirmation: true
+                }
+            );
+
+            return res.json({
+                success: true,
+                message: 'Resolution recorded successfully',
+                complaint: result.rows[0]
+            });
+
+        } catch (err) {
+            console.error('resolve complaint error:', err);
+            return res.status(500).json({
+                error: 'Something went wrong while recording resolution'
+            });
+        }
+    }
+);
+router.post(
     '/:id/confirm-resolution',
     requireRole('citizen'),
     getComplaintForRequest,
